@@ -89,11 +89,17 @@ const SECTIONS: { label: string; fields: typeof GENERAL_FIELDS }[] = [
 
 const ALL_FIELDS = [...GENERAL_FIELDS, ...MOTTO_FIELDS, ...RATES_FIELDS, ...LOCATION_FIELDS, ...VILLA_FIELDS, ...FOOTER_FIELDS]
 
-interface Props { initialValues: Record<string, string> }
+interface Props {
+  initialValues: Record<string, string>   // merged: JSON defaults + DB overrides
+}
 
 export default function SiteTextManager({ initialValues }: Props) {
   const [locale, setLocale] = useState<Locale>("en")
+  // Track which keys have been explicitly saved to DB (start from keys that differ from
+  // the defaults — we don't know defaults here, so treat all initial values as baseline)
   const [values, setValues] = useState<Record<string, string>>(initialValues)
+  // Keys that the user has edited in this session (not yet saved)
+  const [dirty, setDirty] = useState<Set<string>>(new Set())
   const [saving, setSaving] = useState(false)
   const [translating, setTranslating] = useState(false)
   const [generating, setGenerating] = useState(false)
@@ -102,7 +108,10 @@ export default function SiteTextManager({ initialValues }: Props) {
   // DB keys are stored as "{locale}:{dotKey}" e.g. "el:rates.termsDeposit"
   const lk = (key: string, l = locale) => `${l}:${key}`
   const get = (key: string, l = locale) => values[lk(key, l)] ?? ""
-  const set = (key: string, value: string) => setValues(prev => ({ ...prev, [lk(key)]: value }))
+  const set = (key: string, value: string) => {
+    setDirty(prev => new Set([...prev, lk(key)]))
+    setValues(prev => ({ ...prev, [lk(key)]: value }))
+  }
 
   function flash(text: string, ok: boolean) {
     setMsg({ text, ok })
@@ -130,10 +139,15 @@ export default function SiteTextManager({ initialValues }: Props) {
   async function translateFromEN(targetLocale: "el" | "de") {
     setTranslating(true)
     try {
+      // Always use EN values (now always populated from JSON defaults)
       const fields: Record<string, string> = {}
       for (const { key } of ALL_FIELDS) {
         const val = get(key, "en")
         if (val) fields[key] = val
+      }
+      if (Object.keys(fields).length === 0) {
+        flash("No English values found to translate", false)
+        return
       }
       const res = await fetch("/api/admin/ai/translate-site", {
         method: "POST",
@@ -149,7 +163,12 @@ export default function SiteTextManager({ initialValues }: Props) {
         }
         return next
       })
-      flash(`Translated all fields to ${LOCALE_LABELS[targetLocale]}`, true)
+      setDirty(prev => {
+        const next = new Set(prev)
+        for (const { key } of ALL_FIELDS) next.add(lk(key, targetLocale))
+        return next
+      })
+      flash(`Translated ${Object.keys(fields).length} fields to ${LOCALE_LABELS[targetLocale]}`, true)
     } catch (e: any) {
       flash(e.message, false)
     } finally {
@@ -254,16 +273,39 @@ export default function SiteTextManager({ initialValues }: Props) {
             {section.label}
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-            {section.fields.map(({ key, label, rows }) => (
-              <div key={key} style={{ gridColumn: rows > 1 ? "span 2" : "span 1" }}>
-                <span style={labelStyle}>{label}</span>
-                {rows > 1 ? (
-                  <textarea value={get(key)} onChange={e => set(key, e.target.value)} rows={rows} style={{ ...input, resize: "vertical" }} />
-                ) : (
-                  <input type="text" value={get(key)} onChange={e => set(key, e.target.value)} style={input} />
-                )}
-              </div>
-            ))}
+            {section.fields.map(({ key, label, rows }) => {
+              const val = get(key)
+              const isDirty = dirty.has(lk(key))
+              const enVal = locale !== "en" ? get(key, "en") : ""
+              return (
+                <div key={key} style={{ gridColumn: rows > 1 ? "span 2" : "span 1" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                    <span style={labelStyle}>{label}</span>
+                    {isDirty && <span style={{ fontSize: 9, fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.06em" }}>edited</span>}
+                  </div>
+                  {locale !== "en" && enVal && (
+                    <div style={{ fontSize: 11, color: "#94a3b8", fontStyle: "italic", marginBottom: 4, lineHeight: 1.4 }}>
+                      EN: {enVal}
+                    </div>
+                  )}
+                  {rows > 1 ? (
+                    <textarea
+                      value={val}
+                      onChange={e => set(key, e.target.value)}
+                      rows={rows}
+                      style={{ ...input, resize: "vertical" }}
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      value={val}
+                      onChange={e => set(key, e.target.value)}
+                      style={input}
+                    />
+                  )}
+                </div>
+              )
+            })}
           </div>
         </div>
       ))}
