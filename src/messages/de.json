@@ -1,0 +1,97 @@
+{
+  "nav": {
+    "villas": "Villen",
+    "lefkada": "Lefkada",
+    "rates": "Preise",
+    "contact": "Kontakt",
+    "enquire": "Anfragen",
+    "langSwitch": "DE"
+  },
+  "home": {
+    "heroTitle1": "Eine stille",
+    "heroTitle2": "Insel",
+    "heroTitle3": "für die wenigen.",
+    "villasHeading": "Drei Villen.",
+    "villasSubheading": "Eine ruhige Straße nahe dem Wasser.",
+    "viewVilla": "Villa ansehen →",
+    "closingGreek": "Ἕως αὔριον.",
+    "closingEn": "Bis morgen.",
+    "reserve": "Eine Woche reservieren →",
+    "mottos": {
+      "0": { "eyebrow": "Λευκάδα · Lefkada", "title": "Eine Insel, auf die man fahren kann.", "body": "Die einzige Ionische Insel, die mit dem Festland verbunden ist — ein schmaler Damm, dann dreißig Kilometer Gebirgskamm und das Meer auf allen Seiten. Kiefernwälder fallen zu weißsteinernen Stränden hinab; Dörfer halten ihre Stunden nach dem Glockenschlag." },
+      "1": { "eyebrow": "Ιόνιο Πέλαγος · Das Ionische Meer", "title": "Ein Meer in der Farbe der Erinnerung.", "body": "Sieben Inseln erheben sich daraus — Korfu, Paxos, Lefkada, Ithaka, Kefalonia, Zakynthos, Kythira. Das Wasser ist klarer als irgendwo sonst in Griechenland." },
+      "2": { "eyebrow": "Ὀδύσσεια · Die Odyssee", "title": "Wo Homers Held sich nach Hause sehnte.", "body": "Manche sagen, Lefkada sei das wahre Ithaka der Odyssee. Wie dem auch sei, diese Gewässer tragen denselben Mythos." }
+    }
+  },
+  "villa": {
+    "maxAdults": "Max. Erwachsene",
+    "children": "Kinder",
+    "bedrooms": "Schlafzimmer",
+    "sqm": "Quadratmeter",
+    "pullout": "Schlafsofa",
+    "pool": "Pool",
+    "rooms": "Zimmer",
+    "bathrooms": "Badezimmer / WC",
+    "views": "Aussicht",
+    "facilities": "Ausstattung",
+    "amenities": "Annehmlichkeiten",
+    "gallery": "Galerie",
+    "bookCta": "Eine Woche buchen in",
+    "bookBtn": "Diese Villa buchen →",
+    "otherVillas": "Andere Villen",
+    "aboutVilla": "Über die Villa",
+    "bathroom1": "2 Badezimmer · Badewanne oder Dusche / WC",
+    "bathroom2": "1 Gäste-WC"
+  },
+  "rates": {
+    "heading": "Preise",
+    "subheading": "Wöchentlich und pro Nacht von April bis Oktober.",
+    "weekly": "Wöchentlich",
+    "nightly": "Pro Nacht",
+    "season": "Saison",
+    "terms": "Bedingungen",
+    "holdDate": "Datum sichern →",
+    "holdHeading": "Bereit ein Datum zu sichern?"
+  },
+  "contact": {
+    "heading": "Kontakt",
+    "name": "Name",
+    "email": "E-Mail",
+    "villa": "Villa (optional)",
+    "message": "Nachricht",
+    "send": "Anfrage senden →",
+    "success": "Danke. Eleni wird sich in Kürze melden. In der Regel innerhalb von vierundzwanzig Stunden.",
+    "phone": "+30 694 XXX XXXX",
+    "address": "Gebiet Agios Nikitas, Lefkada, Griechenland",
+    "responseTime": "ἕως αὔριον / Bis morgen.",
+    "left": {
+      "heading": "Kontaktieren Sie uns",
+      "body": "Schreiben Sie uns bei Fragen zu den Villen, zur Verfügbarkeit oder zu Lefkada selbst."
+    }
+  },
+  "booking": {
+    "heading": "Ihren Aufenthalt buchen",
+    "name": "Name",
+    "email": "E-Mail",
+    "villa": "Villa",
+    "arrival": "Anreisedatum",
+    "nights": "Nächte (min. 7)",
+    "guests": "Gäste",
+    "message": "Nachricht",
+    "send": "Buchungsanfrage senden →",
+    "success": "Danke. Eleni wird sich in Kürze melden.",
+    "close": "Schließen"
+  },
+  "lefkada": {
+    "heading": "Lefkada",
+    "subheading": "Fünf Orte, die es zu kennen gilt.",
+    "readMore": "Mehr lesen →",
+    "fromVilla": "Von der Villa",
+    "backToGuide": "← Zurück zum Reiseführer"
+  },
+  "footer": {
+    "copy": "© Ionian Dream Villas",
+    "location": "Lefkada, Griechenland",
+    "email": "stay@ionian-dream-villas.com"
+  }
+}

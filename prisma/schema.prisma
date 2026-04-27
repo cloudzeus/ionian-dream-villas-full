@@ -1,0 +1,347 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          Role      @default(ADMIN)
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+// ─── Villas ───────────────────────────────────────────────────────────────────
+
+model Villa {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  sortOrder   Int      @default(0)
+  bedrooms    Int      @default(3)
+  guests      Int      @default(6)
+  children    Int      @default(0)
+  sqm         Int      @default(140)
+  pullout     Int      @default(1)
+  pool        Boolean  @default(true)
+  coordX      Float    @default(50)
+  coordY      Float    @default(50)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  translations VillaTranslation[]
+  images       VillaImage[]
+  rooms        VillaRoom[]
+  amenities    VillaAmenity[]
+  facilities   VillaFacility[]
+  rates        SeasonRate[]
+}
+
+model VillaTranslation {
+  id          String   @id @default(cuid())
+  villaId     String
+  locale      Locale
+  name        String
+  nameLocal   String   // Greek name (Κάστρο) shown in all locales as accent
+  region      String
+  blurb       String   @db.Text
+  description String   @db.Text
+  view        String
+  pool        String
+  villa       Villa    @relation(fields: [villaId], references: [id], onDelete: Cascade)
+
+  @@unique([villaId, locale])
+}
+
+model VillaImage {
+  id        String   @id @default(cuid())
+  villaId   String
+  url       String   // BunnyCDN URL (webp)
+  altEn     String   @default("")
+  altGr     String   @default("")
+  altDe     String   @default("")
+  sortOrder Int      @default(0)
+  isCover   Boolean  @default(false)
+  villa     Villa    @relation(fields: [villaId], references: [id], onDelete: Cascade)
+
+  @@index([villaId])
+}
+
+model VillaRoom {
+  id        String   @id @default(cuid())
+  villaId   String
+  sortOrder Int      @default(0)
+  villa     Villa    @relation(fields: [villaId], references: [id], onDelete: Cascade)
+
+  translations VillaRoomTranslation[]
+  beds         BedType[]
+}
+
+model VillaRoomTranslation {
+  id     String @id @default(cuid())
+  roomId String
+  locale Locale
+  name   String
+  note   String @db.Text
+  room   VillaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, locale])
+}
+
+model BedType {
+  id       String    @id @default(cuid())
+  roomId   String
+  type     String    // "Double", "Single", "Sofa bed", etc.
+  quantity Int       @default(1)
+  room     VillaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+model VillaAmenity {
+  id       String @id @default(cuid())
+  villaId  String
+  slug     String // "air-conditioning", "wifi", etc.
+  icon     String @default("")
+  villa    Villa  @relation(fields: [villaId], references: [id], onDelete: Cascade)
+
+  translations VillaAmenityTranslation[]
+
+  @@index([villaId])
+}
+
+model VillaAmenityTranslation {
+  id        String       @id @default(cuid())
+  amenityId String
+  locale    Locale
+  label     String
+  amenity   VillaAmenity @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+
+  @@unique([amenityId, locale])
+}
+
+model VillaFacility {
+  id      String @id @default(cuid())
+  villaId String
+  slug    String // "bathroom", "pool", etc.
+  icon    String @default("")
+  villa   Villa  @relation(fields: [villaId], references: [id], onDelete: Cascade)
+
+  translations VillaFacilityTranslation[]
+
+  @@index([villaId])
+}
+
+model VillaFacilityTranslation {
+  id         String        @id @default(cuid())
+  facilityId String
+  locale     Locale
+  label      String
+  facility   VillaFacility @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+
+  @@unique([facilityId, locale])
+}
+
+// ─── Rates ────────────────────────────────────────────────────────────────────
+
+model SeasonRate {
+  id      String @id @default(cuid())
+  villaId String
+  season  String // "Spring · Apr–May"
+  weekly  Int
+  nightly Int
+  sortOrder Int @default(0)
+  villa   Villa  @relation(fields: [villaId], references: [id], onDelete: Cascade)
+
+  @@index([villaId])
+}
+
+// ─── Locations ────────────────────────────────────────────────────────────────
+
+model Location {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  tone      String   @default("sea") // "sea" | "sand" | "stone" | "deep"
+  sortOrder Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations LocationTranslation[]
+  images       LocationImage[]
+  facts        LocationFact[]
+}
+
+model LocationTranslation {
+  id         String   @id @default(cuid())
+  locationId String
+  locale     Locale
+  name       String
+  nameLocal  String   // Greek/local name
+  kind       String   // "Beach · west coast"
+  short      String   @db.Text
+  long       String   @db.Text
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([locationId, locale])
+}
+
+model LocationImage {
+  id         String   @id @default(cuid())
+  locationId String
+  url        String
+  altEn      String   @default("")
+  sortOrder  Int      @default(0)
+  isCover    Boolean  @default(false)
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@index([locationId])
+}
+
+model LocationFact {
+  id         String   @id @default(cuid())
+  locationId String
+  sortOrder  Int      @default(0)
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  translations LocationFactTranslation[]
+}
+
+model LocationFactTranslation {
+  id       String       @id @default(cuid())
+  factId   String
+  locale   Locale
+  label    String       // "Type"
+  value    String       // "Pebble · cliff"
+  fact     LocationFact @relation(fields: [factId], references: [id], onDelete: Cascade)
+
+  @@unique([factId, locale])
+}
+
+// ─── Testimonials ─────────────────────────────────────────────────────────────
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  quote     String   @db.Text
+  name      String
+  place     String
+  sortOrder Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+// ─── Enquiries ────────────────────────────────────────────────────────────────
+
+model Enquiry {
+  id        String      @id @default(cuid())
+  kind      EnquiryKind
+  name      String
+  email     String
+  villa     String?
+  arrival   String?
+  nights    Int?
+  guests    Int?
+  message   String      @db.Text
+  status    String      @default("new") // "new" | "replied" | "archived"
+  createdAt DateTime    @default(now())
+}
+
+enum EnquiryKind {
+  BOOKING
+  CONTACT
+}
+
+// ─── Settings ─────────────────────────────────────────────────────────────────
+
+model SiteSetting {
+  key   String @id
+  value String @db.Text
+}
+
+// ─── Hero Slides ──────────────────────────────────────────────────────────────
+
+model HeroSlide {
+  id         String  @id @default(cuid())
+  imageUrl   String  @db.Text
+  captionEn  String  @default("")
+  captionGr  String  @default("")
+  sortOrder  Int     @default(0)
+  active     Boolean @default(true)
+}
+
+// ─── Media Library ────────────────────────────────────────────────────────────
+
+model MediaItem {
+  id          String   @id @default(cuid())
+  filename    String
+  originalUrl String   @db.Text   // original Strapi URL or null
+  bunnyUrl    String   @db.Text   // final BunnyCDN webp URL
+  mimeType    String   @default("image/webp")
+  width       Int?
+  height      Int?
+  size        Int?     // bytes
+  folder      String   @default("uploads")
+  altEn       String   @default("")
+  altGr       String   @default("")
+  altDe       String   @default("")
+  usedBy      String?  // "villa:castro", "location:porto-katsiki", etc.
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Locale {
+  en
+  el
+  de
+}
