@@ -1,8 +1,17 @@
+import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { prisma } from "@/lib/prisma"
+import { getPageSeo, buildMetadata } from "@/lib/seo"
 import Link from "next/link"
 import Image from "next/image"
 import MotionInit from "@/components/chrome/MotionInit"
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const seo = await getPageSeo("villas", locale)
+  const cover = await prisma.villaImage.findFirst({ where: { isCover: true }, orderBy: { sortOrder: "asc" } })
+  return buildMetadata(seo, { path: `/${locale}/villas`, locale, image: cover?.url })
+}
 
 export default async function VillasPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import MediaGallery from "./MediaGallery"
@@ -1157,7 +1156,8 @@ function SortableImageCard({ img, onSetCover, onRemove }: {
       )}
     >
       <div className="relative h-40">
-        <Image src={img.url} alt={img.altEn || ""} fill className="object-cover" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={img.url} alt={img.altEn || ""} className="object-cover w-full h-full" />
         {img.isCover && (
           <Badge className="absolute top-2 left-2 text-xs">Cover</Badge>
         )}

@@ -1,9 +1,38 @@
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import Image from "next/image"
 import Link from "next/link"
 import MotionInit from "@/components/chrome/MotionInit"
 import { prisma } from "@/lib/prisma"
+import { getPageSeo, buildMetadata, SITE_URL } from "@/lib/seo"
+import JsonLd from "@/components/primitives/JsonLd"
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale, slug } = await params
+  const [seo, location] = await Promise.all([
+    getPageSeo(`location:${slug}`, locale),
+    prisma.location.findUnique({
+      where: { slug },
+      select: {
+        translations: { where: { locale: locale as any } },
+        images: { where: { isCover: true }, take: 1 },
+      },
+    }),
+  ])
+  const tr = location?.translations[0]
+  const cover = location?.images[0]
+  const overriddenSeo = {
+    ...seo,
+    title: seo.title || (tr?.name ? `${tr.name} — Lefkada Island Guide · Ionian Dream Villas` : seo.title),
+    description: seo.description || tr?.short || seo.description,
+  }
+  return buildMetadata(overriddenSeo, {
+    path: `/${locale}/lefkada/${slug}`,
+    locale,
+    image: cover?.url,
+  })
+}
 
 export async function generateStaticParams() {
   const locations = await prisma.location.findMany({ where: { published: true }, select: { slug: true } })
@@ -34,8 +63,35 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
   const secondImage = location.images[1]
   const galleryImages = location.images.slice(2)
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "TouristAttraction",
+    name: tr?.name || slug,
+    description: tr?.long || tr?.short || undefined,
+    url: `${SITE_URL}/${locale}/lefkada/${slug}`,
+    ...(coverImage ? { image: coverImage.url } : {}),
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Lefkada",
+      addressRegion: "Ionian Islands",
+      addressCountry: "GR",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: "38.7167",
+      longitude: "20.6500",
+    },
+    isLocatedInPlace: {
+      "@type": "AdministrativeArea",
+      name: "Lefkada",
+      containedInPlace: { "@type": "Country", name: "Greece" },
+    },
+    touristType: ["Beach", "Nature", "Sightseeing"],
+  }
+
   return (
     <>
+      <JsonLd data={jsonLd} />
       <MotionInit />
 
       {/* Full-screen hero */}

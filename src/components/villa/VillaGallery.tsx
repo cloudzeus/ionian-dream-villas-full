@@ -48,7 +48,7 @@ export default function VillaGallery({ images, villaName }: { images: GalleryIma
         >
           <Image
             src={first.url} alt={first.altEn || villaName}
-            fill style={{ objectFit: "cover", transition: "transform 0.6s ease" }}
+            fill sizes="100vw" style={{ objectFit: "cover", transition: "transform 0.6s ease" }}
             onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.03)")}
             onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
           />
@@ -78,7 +78,7 @@ export default function VillaGallery({ images, villaName }: { images: GalleryIma
               >
                 <Image
                   src={img.url} alt={img.altEn || ""}
-                  fill style={{ objectFit: "cover", transition: "transform 0.6s ease" }}
+                  fill sizes="25vw" style={{ objectFit: "cover", transition: "transform 0.6s ease" }}
                   onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}
                   onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
                 />
@@ -117,7 +117,7 @@ export default function VillaGallery({ images, villaName }: { images: GalleryIma
             <Image
               src={nonCover[lightbox].url}
               alt={nonCover[lightbox].altEn || villaName}
-              fill style={{ objectFit: "contain" }}
+              fill sizes="85vw" style={{ objectFit: "contain" }}
             />
           </div>
 

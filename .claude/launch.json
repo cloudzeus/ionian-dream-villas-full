@@ -4,8 +4,9 @@
     {
       "name": "ionian-next",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["node_modules/.bin/next", "dev"],
-      "port": 3000
+      "runtimeArgs": ["node_modules/.bin/next", "dev", "--webpack"],
+      "port": 3000,
+      "autoPort": false
     }
   ]
 }

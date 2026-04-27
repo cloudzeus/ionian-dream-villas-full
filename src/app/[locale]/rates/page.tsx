@@ -1,8 +1,16 @@
+import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
 import { prisma } from "@/lib/prisma"
+import { getPageSeo, buildMetadata } from "@/lib/seo"
 import Link from "next/link"
 import Image from "next/image"
 import MotionInit from "@/components/chrome/MotionInit"
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const seo = await getPageSeo("rates", locale)
+  return buildMetadata(seo, { path: `/${locale}/rates`, locale })
+}
 
 const RATE_TERMS: Record<string, string> = {
   "Deposit": "A 25% deposit secures your week; the balance is due thirty days before arrival. Bank transfer or major card.",

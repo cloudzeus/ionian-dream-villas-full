@@ -1,6 +1,14 @@
+import type { Metadata } from "next"
 import { getTranslations } from "next-intl/server"
+import { getPageSeo, buildMetadata } from "@/lib/seo"
 import PageHeader from "@/components/primitives/PageHeader"
 import ContactForm from "@/components/forms/ContactForm"
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const seo = await getPageSeo("contact", locale)
+  return buildMetadata(seo, { path: `/${locale}/contact`, locale })
+}
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params

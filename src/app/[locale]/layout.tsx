@@ -6,6 +6,10 @@ import PageNav from "@/components/chrome/PageNav"
 import FixedFooter from "@/components/chrome/FixedFooter"
 import LangSetter from "@/components/chrome/LangSetter"
 
+export function generateStaticParams() {
+  return [{ locale: "en" }, { locale: "el" }, { locale: "de" }]
+}
+
 export default async function LocaleLayout({
   children,
   params,

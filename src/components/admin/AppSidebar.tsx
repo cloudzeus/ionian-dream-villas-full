@@ -13,6 +13,7 @@ import {
   SettingsIcon,
   UsersIcon,
   HelpCircleIcon,
+  SearchIcon,
 } from "lucide-react"
 
 import { NavMain } from "@/components/admin/NavMain"
@@ -39,6 +40,7 @@ const navItems = [
   { title: "Rates", url: "/admin/rates", icon: BarChartIcon },
   { title: "Enquiries", url: "/admin/enquiries", icon: MailIcon },
   { title: "Media", url: "/admin/media", icon: ImageIcon },
+  { title: "SEO", url: "/admin/seo", icon: SearchIcon },
   { title: "Users", url: "/admin/users", icon: UsersIcon },
   { title: "Settings", url: "/admin/settings", icon: SettingsIcon },
 ]

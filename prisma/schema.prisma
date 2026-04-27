@@ -338,6 +338,22 @@ model MediaItem {
   updatedAt   DateTime @updatedAt
 }
 
+// ─── SEO ──────────────────────────────────────────────────────────────────────
+
+model PageSeo {
+  id            String   @id @default(cuid())
+  pageKey       String   // "home" | "villas" | "lefkada" | "rates" | "contact" | "villa:castro" | "location:porto-katsiki"
+  locale        Locale
+  title         String   @db.VarChar(120)
+  description   String   @db.VarChar(300)
+  ogTitle       String?  @db.VarChar(120)
+  ogDescription String?  @db.VarChar(300)
+  keywords      String?  @db.Text
+  updatedAt     DateTime @updatedAt
+
+  @@unique([pageKey, locale])
+}
+
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
 enum Locale {

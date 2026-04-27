@@ -1,11 +1,36 @@
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { getTranslations } from "next-intl/server"
 import { prisma } from "@/lib/prisma"
+import { getPageSeo, buildMetadata, SITE_URL, SITE_NAME } from "@/lib/seo"
 import Image from "next/image"
 import Link from "next/link"
 import MotionInit from "@/components/chrome/MotionInit"
 import VillaBookingButton from "@/components/villa/VillaBookingButton"
 import VillaGallery from "@/components/villa/VillaGallery"
+import JsonLd from "@/components/primitives/JsonLd"
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale, slug } = await params
+  const [seo, villa] = await Promise.all([
+    getPageSeo(`villa:${slug}`, locale),
+    prisma.villa.findUnique({
+      where: { slug },
+      select: {
+        translations: { where: { locale: locale as any }, select: { name: true, blurb: true } },
+        images: { where: { isCover: true }, take: 1, select: { url: true } },
+      },
+    }),
+  ])
+  const tr = villa?.translations[0]
+  const image = villa?.images[0]?.url
+  // Use DB seo if it has real content, else fall back to villa content
+  if (!seo.title.includes("Ionian Dream Villas") && tr) {
+    seo.title = seo.title || `${tr.name} — Luxury Villa · Lefkada, Greece`
+    seo.description = seo.description || tr.blurb?.slice(0, 155) || ""
+  }
+  return buildMetadata(seo, { path: `/${locale}/villas/${slug}`, locale, image })
+}
 
 export async function generateStaticParams() {
   return [
@@ -47,15 +72,49 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
     },
   })
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    name: tr?.name || slug,
+    description: tr?.blurb,
+    url: `${SITE_URL}/${locale}/villas/${slug}`,
+    image: coverImage?.url,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Lefkada",
+      addressCountry: "GR",
+    },
+    containedInPlace: {
+      "@type": "TouristDestination",
+      name: "Lefkada, Ionian Islands, Greece",
+    },
+    amenityFeature: villa.amenities.slice(0, 8).map(a => ({
+      "@type": "LocationFeatureSpecification",
+      name: a.translations[0]?.label || a.slug,
+      value: true,
+    })),
+    offers: villa.rates.map(r => ({
+      "@type": "Offer",
+      name: r.season,
+      price: r.weekly,
+      priceCurrency: "EUR",
+      unitText: "WEEK",
+    })),
+    numberOfRooms: villa.bedrooms,
+    permittedUsage: "Vacation rental",
+    brand: { "@type": "Brand", name: SITE_NAME },
+  }
+
   return (
     <>
+      <JsonLd data={jsonLd} />
       <MotionInit />
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="x-hero-section" style={{ position: "relative", height: "100vh", minHeight: 600, overflow: "hidden", color: "white" }}>
         <div className="x-hero-bg" style={{ position: "absolute", inset: "-15% 0", background: "#1C2A33" }}>
           {coverImage && (
-            <Image src={coverImage.url} alt={tr?.name || slug} fill priority style={{ objectFit: "cover", objectPosition: "center 30%" }} />
+            <Image src={coverImage.url} alt={tr?.name || slug} fill priority sizes="100vw" style={{ objectFit: "cover", objectPosition: "center 30%" }} />
           )}
         </div>
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(14,30,40,0.55) 0%, rgba(14,30,40,0.1) 40%, rgba(14,30,40,0.75) 100%)", zIndex: 1 }} />
@@ -127,7 +186,7 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
         </div>
         <div className="x-clip-reveal" style={{ position: "relative", background: "#c0cdd4", minHeight: 520 }}>
           {villa.images[1] && (
-            <Image src={villa.images[1].url} alt="" fill style={{ objectFit: "cover" }} />
+            <Image src={villa.images[1].url} alt="" fill sizes="50vw" style={{ objectFit: "cover" }} />
           )}
         </div>
       </section>
@@ -243,7 +302,7 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
                 <Link key={v.slug} href={`/${locale}/villas/${v.slug}`} className="villa-thumb" style={{ textDecoration: "none", color: "var(--color-ink)", display: "block" }}>
                   <div style={{ position: "relative", height: 280, overflow: "hidden", marginBottom: 20, background: "#1C2A33" }}>
                     {vImg && (
-                      <Image src={vImg.url} alt={vtr?.name || v.slug} fill
+                      <Image src={vImg.url} alt={vtr?.name || v.slug} fill sizes="33vw"
                         className="villa-thumb-img"
                         style={{ objectFit: "cover" }}
                       />
