@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { z } from "zod"
 import { prisma } from "@/lib/prisma"
+import { sendEnquiryNotification, sendThankYouEmail } from "@/lib/mailer"
 
 const schema = z.object({
   kind: z.enum(["booking", "contact"]),
@@ -30,19 +31,29 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    // Optionally send email via Resend if API key set
-    if (process.env.RESEND_API_KEY) {
-      try {
-        const { Resend } = await import("resend")
-        const resend = new Resend(process.env.RESEND_API_KEY)
-        await resend.emails.send({
-          from: "noreply@ionian-dream-villas.com",
-          to: process.env.MAIL_TO || "stay@ionian-dream-villas.com",
-          subject: `New ${body.kind} enquiry from ${body.name}`,
-          text: JSON.stringify(body, null, 2),
-        })
-      } catch {}
-    }
+    // Fire emails in parallel, silently ignore failures
+    await Promise.allSettled([
+      // Notify admin
+      sendEnquiryNotification({
+        kind: body.kind,
+        name: body.name,
+        email: body.email,
+        villa: body.villa,
+        arrival: body.arrival,
+        nights: body.nights,
+        guests: body.guests,
+        message: body.message,
+      }),
+      // Thank-you email to guest
+      sendThankYouEmail(body.email, {
+        name: body.name,
+        villa: body.villa || "",
+        arrival: body.arrival || "",
+        nights: String(body.nights || ""),
+        guests: String(body.guests || ""),
+        message: body.message,
+      }),
+    ])
 
     return NextResponse.json({ ok: true })
   } catch (e) {
