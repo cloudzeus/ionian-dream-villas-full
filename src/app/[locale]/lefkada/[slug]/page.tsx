@@ -109,6 +109,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
               alt={coverImage.altEn || tr?.name || slug}
               fill
               priority
+              sizes="100vw"
               style={{ objectFit: "cover", objectPosition: "center 35%" }}
             />
           )}

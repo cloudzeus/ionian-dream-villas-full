@@ -67,6 +67,7 @@ export default function HeroSlideshow({ locale, villas, slides }: Props) {
             alt="Lefkada · Ionian Sea"
             fill
             priority={i === 0}
+            sizes="100vw"
             style={{
               objectFit: "cover",
               objectPosition: "center 40%",
