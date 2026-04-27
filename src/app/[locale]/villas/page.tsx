@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic"
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
   const seo = await getPageSeo("villas", locale)
-  const cover = await prisma.villaImage.findFirst({ where: { isCover: true }, orderBy: { sortOrder: "asc" } })
+  const cover = await prisma.villaImage.findFirst({ where: { isCover: true }, orderBy: { sortOrder: "asc" } }).catch(() => null)
   return await buildMetadata(seo, { path: `/${locale}/villas`, locale, image: cover?.url })
 }
 
@@ -27,7 +27,7 @@ export default async function VillasPage({ params }: { params: Promise<{ locale:
       images: { orderBy: { sortOrder: "asc" }, take: 3 },
       rates: { orderBy: { sortOrder: "asc" }, take: 1 },
     },
-  })
+  }).catch(() => [])
 
   return (
     <>

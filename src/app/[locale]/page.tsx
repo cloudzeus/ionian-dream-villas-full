@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params
   if (!["en", "el", "de"].includes(locale)) return {}
   const seo = await getPageSeo("home", locale)
-  const slide = await prisma.heroSlide.findFirst({ where: { active: true }, orderBy: { sortOrder: "asc" } })
+  const slide = await prisma.heroSlide.findFirst({ where: { active: true }, orderBy: { sortOrder: "asc" } }).catch(() => null)
   return await buildMetadata(seo, { path: `/${locale}`, locale, image: slide?.imageUrl })
 }
 
@@ -35,7 +35,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         images: { orderBy: { sortOrder: "asc" }, take: 5 },
         rates: { orderBy: { sortOrder: "asc" }, take: 1 },
       },
-    }),
+    }).catch(() => []),
     prisma.location.findMany({
       where: { published: true },
       orderBy: { sortOrder: "asc" },
@@ -44,11 +44,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         translations: { where: { locale: locale as any } },
         images: { orderBy: { sortOrder: "asc" }, take: 1 },
       },
-    }),
+    }).catch(() => []),
     prisma.heroSlide.findMany({
       where: { active: true },
       orderBy: { sortOrder: "asc" },
-    }),
+    }).catch(() => []),
   ])
 
   const tones = ["sea", "sand", "stone", "sea", "sand", "stone"] as const

@@ -27,7 +27,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
     "social:facebook", "social:instagram", "social:twitter",
     "social:youtube", "social:tripadvisor",
   ]
-  const rows = await prisma.siteSetting.findMany({ where: { key: { in: keys } } })
+  const rows = await prisma.siteSetting.findMany({ where: { key: { in: keys } } }).catch(() => [])
   const ci = Object.fromEntries(rows.map(r => [r.key, r.value]))
 
   const email       = ci["ci:email_main"]    || t("email")

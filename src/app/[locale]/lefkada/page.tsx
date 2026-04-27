@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic"
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
   const seo = await getPageSeo("lefkada", locale)
-  const cover = await prisma.locationImage.findFirst({ where: { isCover: true }, orderBy: { sortOrder: "asc" } })
+  const cover = await prisma.locationImage.findFirst({ where: { isCover: true }, orderBy: { sortOrder: "asc" } }).catch(() => null)
   return await buildMetadata(seo, { path: `/${locale}/lefkada`, locale, image: cover?.url })
 }
 
@@ -26,7 +26,7 @@ export default async function LefkadaPage({ params }: { params: Promise<{ locale
       translations: { where: { locale: locale as any } },
       images: { orderBy: { sortOrder: "asc" }, take: 1 },
     },
-  })
+  }).catch(() => [])
 
   const featured = locations[0]
   const rest = locations.slice(1)

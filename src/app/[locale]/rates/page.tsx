@@ -50,7 +50,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
       rates: { orderBy: { sortOrder: "asc" } },
       images: { where: { isCover: true }, take: 1 },
     },
-  })
+  }).catch(() => [])
 
   // These tables may not exist yet on older deployments — fail gracefully
   const [dbTerms, dbFees] = await Promise.all([

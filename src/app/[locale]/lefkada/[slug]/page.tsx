@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         translations: { where: { locale: locale as any } },
         images: { where: { isCover: true }, take: 1 },
       },
-    }),
+    }).catch(() => null),
   ])
   const tr = location?.translations[0]
   const cover = location?.images[0]
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 export async function generateStaticParams() {
-  const locations = await prisma.location.findMany({ where: { published: true }, select: { slug: true } })
+  const locations = await prisma.location.findMany({ where: { published: true }, select: { slug: true } }).catch(() => [])
   const locales = ["en", "el", "de"]
   return locales.flatMap(locale => locations.map(l => ({ locale, slug: l.slug })))
 }
@@ -56,7 +56,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
         include: { translations: { where: { locale: locale as any } } },
       },
     },
-  })
+  }).catch(() => null)
 
   if (!location) notFound()
 

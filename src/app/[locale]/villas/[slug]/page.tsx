@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
         translations: { where: { locale: locale as any }, select: { name: true, blurb: true } },
         images: { where: { isCover: true }, take: 1, select: { url: true } },
       },
-    }),
+    }).catch(() => null),
   ])
   const tr = villa?.translations[0]
   const image = villa?.images[0]?.url
@@ -58,7 +58,7 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
       amenities: { include: { translations: { where: { locale: locale as any } } } },
       rates: { orderBy: { sortOrder: "asc" } },
     },
-  })
+  }).catch(() => null)
 
   if (!villa) notFound()
 
@@ -72,7 +72,7 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
       translations: { where: { locale: locale as any } },
       images: { where: { isCover: true }, take: 1 },
     },
-  })
+  }).catch(() => [])
 
   const jsonLd = {
     "@context": "https://schema.org",
