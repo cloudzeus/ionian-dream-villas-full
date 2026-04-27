@@ -42,24 +42,20 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: "rates" })
 
-  const [villas, dbTerms, dbFees] = await Promise.all([
-    prisma.villa.findMany({
-      where: { published: true },
-      orderBy: { sortOrder: "asc" },
-      include: {
-        translations: { where: { locale: locale as any } },
-        rates: { orderBy: { sortOrder: "asc" } },
-        images: { where: { isCover: true }, take: 1 },
-      },
-    }),
-    prisma.rateTerm.findMany({
-      orderBy: { sortOrder: "asc" },
-      include: { translations: true },
-    }),
-    prisma.rateFee.findMany({
-      orderBy: { sortOrder: "asc" },
-      include: { translations: true },
-    }),
+  const villas = await prisma.villa.findMany({
+    where: { published: true },
+    orderBy: { sortOrder: "asc" },
+    include: {
+      translations: { where: { locale: locale as any } },
+      rates: { orderBy: { sortOrder: "asc" } },
+      images: { where: { isCover: true }, take: 1 },
+    },
+  })
+
+  // These tables may not exist yet on older deployments — fail gracefully
+  const [dbTerms, dbFees] = await Promise.all([
+    prisma.rateTerm.findMany({ orderBy: { sortOrder: "asc" }, include: { translations: true } }).catch(() => []),
+    prisma.rateFee.findMany({ orderBy: { sortOrder: "asc" }, include: { translations: true } }).catch(() => []),
   ])
 
   // Resolve translation for current locale, fall back to EN

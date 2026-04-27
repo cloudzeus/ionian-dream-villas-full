@@ -12,14 +12,8 @@ export default async function AdminRatesPage() {
         rates: { orderBy: { sortOrder: "asc" } },
       },
     }),
-    prisma.rateTerm.findMany({
-      orderBy: { sortOrder: "asc" },
-      include: { translations: true },
-    }),
-    prisma.rateFee.findMany({
-      orderBy: { sortOrder: "asc" },
-      include: { translations: true },
-    }),
+    prisma.rateTerm.findMany({ orderBy: { sortOrder: "asc" }, include: { translations: true } }).catch(() => []),
+    prisma.rateFee.findMany({ orderBy: { sortOrder: "asc" }, include: { translations: true } }).catch(() => []),
   ])
 
   const villaData = villas.map(v => ({
