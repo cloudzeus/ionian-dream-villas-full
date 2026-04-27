@@ -52,27 +52,23 @@ export async function POST(req: Request) {
     const localeName = localeNames[locale] || "English"
 
     const result = await deepseekJSON<SeoFields>(
-      `You are an expert SEO specialist for Ionian Dream Villas, a luxury villa rental website on Lefkada island, Greece. Generate precise, compelling SEO metadata that will rank well on Google and attract high-intent travellers searching for luxury villa rentals in Greece.`,
-      `Generate SEO metadata in ${localeName} for this page:
+      `You are a senior SEO strategist and native ${localeName} copywriter specialising in luxury travel and boutique hospitality. You write meta titles and descriptions that rank well on Google AND genuinely entice the right traveller to click — not keyword-stuffed filler, but precise, evocative copy that signals quality and exclusivity.
 
-Page key: ${pageKey}
-Page context: ${pageContext || "Ionian Dream Villas — luxury villa rentals on Lefkada island, Greece"}
+Write naturally in ${localeName} as a native speaker would. Avoid literal translations, anglicisms, or robotic phrasing.`,
+      `Write SEO metadata in ${localeName} for this page of a luxury private villa rental website on Lefkada island, Greece:
+
+Page: ${pageKey}
+Context: ${pageContext || "Ionian Dream Villas — three private luxury villas on the western shore of Lefkada, Greece. Private pools, sea views, direct booking."}
 
 Requirements:
-- title: max 60 characters, include the key topic + brand/location. Do NOT include "Ionian Dream Villas" if the page key is "home"
-- description: 140-155 characters, compelling, include a soft CTA
-- ogTitle: same as title or a slightly catchier variant (max 60 chars)
-- ogDescription: same as description (max 155 chars)
-- keywords: 5-8 comma-separated terms, mix short and long-tail
+- title: 50–60 chars. Lead with the key benefit or place name; end with brand/location if space allows.
+- description: 140–155 chars. One compelling reason to click + a soft, natural CTA. Read it aloud — it should sound human.
+- ogTitle: same as title or a slightly more emotive variant (≤60 chars).
+- ogDescription: same quality as description (≤155 chars).
+- keywords: 6–8 comma-separated terms. Mix branded, generic, and long-tail. Use ${localeName} terms searchers actually type.
 
 Return ONLY valid JSON:
-{
-  "title": "...",
-  "description": "...",
-  "ogTitle": "...",
-  "ogDescription": "...",
-  "keywords": "..."
-}`,
+{ "title": "...", "description": "...", "ogTitle": "...", "ogDescription": "...", "keywords": "..." }`,
       800
     )
 

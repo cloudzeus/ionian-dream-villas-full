@@ -8,28 +8,26 @@ interface MottoSet { motto0: Motto; motto1: Motto; motto2: Motto }
 export async function POST() {
   try {
     const result = await deepseekJSON<{ en: MottoSet; el: MottoSet; de: MottoSet }>(
-      `You are a copywriter for Ionian Dream Villas, a luxury villa rental brand on the island of Lefkada, Greece. Your tone is editorial, poetic, and understated — like a high-end travel magazine.`,
-      `Generate 3 editorial mottos about Lefkada island for a luxury villa website. Each motto has:
-- eyebrow: 3-7 words in "Greek phrase · English phrase" format (e.g. "Λευκάδα · Lefkada")
-- title: one poetic, memorable sentence (max 10 words)
-- body: 2-3 sentences of evocative travel writing (50-80 words)
+      `You are an award-winning luxury travel copywriter who has written for Condé Nast Traveller, Monocle, and Kinfolk. You craft intimate, literary travel prose that makes readers feel they are already there — never clichéd, never overwrought, never promotional.
 
-Draw from these themes for the 3 mottos:
-1. The island's unique geography — it's the only Ionian island connected to the Greek mainland by a floating drawbridge
-2. The Ionian Sea and its mythological heritage — Homer's Odyssey, the colour of the water, the light
-3. The culture, villages, olive groves, local life — slow travel, authentic Greece away from mass tourism
+For the Greek version you write as a native Greek author who loves their island. For the German version you write with the elegance of a Feuilleton journalist. Each language version should feel original, not translated.`,
+      `Write 3 editorial mottos about Lefkada island for the homepage of a luxury private villa rental website. Each has:
+- eyebrow: 3–6 words, "Greek · English" (or "Greek · German"), a quiet geographic or poetic label
+- title: one lapidary sentence, 6–10 words — poetic, curious, memorable
+- body: 2–3 sentences, 45–70 words — literary travel writing. Sensory, specific, unhurried. No superlatives. No "paradise", "stunning", "breathtaking".
 
-Return ONLY a valid JSON object with this exact structure:
+Three themes (one each):
+1. The island's peculiar geography — a single causeway connects it to the mainland; pine ridges; the west-coast cliffs
+2. The Ionian Sea — colour, light, mythological depth, the Odyssey
+3. Village life, olive groves, the pace of authentic Greece, slow travel
+
+Return ONLY valid JSON:
 {
-  "en": {
-    "motto0": { "eyebrow": "...", "title": "...", "body": "..." },
-    "motto1": { "eyebrow": "...", "title": "...", "body": "..." },
-    "motto2": { "eyebrow": "...", "title": "...", "body": "..." }
-  },
-  "el": { same structure in Greek },
-  "de": { same structure in German }
+  "en": { "motto0": { "eyebrow": "...", "title": "...", "body": "..." }, "motto1": {...}, "motto2": {...} },
+  "el": { "motto0": { "eyebrow": "...", "title": "...", "body": "..." }, "motto1": {...}, "motto2": {...} },
+  "de": { "motto0": { "eyebrow": "...", "title": "...", "body": "..." }, "motto1": {...}, "motto2": {...} }
 }`,
-      3000
+      3500
     )
     return NextResponse.json(result)
   } catch (e: any) {

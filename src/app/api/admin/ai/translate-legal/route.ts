@@ -13,15 +13,24 @@ export async function POST(req: NextRequest) {
   const langMap: Record<string, string> = { el: "Greek", de: "German", en: "English" }
   const lang = langMap[targetLocale] || targetLocale
 
-  const prompt = `Translate the following legal page content from English to ${lang}.
-Return a JSON object with "title" and "content" fields.
-The content may contain HTML — preserve all HTML tags exactly, only translate the visible text inside them.
-Do not add any explanations, only return valid JSON.
+  const systemPrompt = `You are a professional legal translator and native ${lang} speaker specialising in hospitality and travel law. You do NOT translate mechanically — you write fluent, natural ${lang} that reads as if originally authored by a ${lang}-speaking lawyer familiar with European (GDPR) and Greek law.
+
+Rules:
+- Preserve the legal accuracy and formal register of the source.
+- Use the natural legal vocabulary a ${lang}-speaking professional would use — not word-for-word calques.
+- Headings (inside <h2> tags) should be sharp and clear.
+- Paragraph text should flow naturally for a ${lang} reader.
+- Preserve ALL HTML tags exactly as they are — only translate text nodes.
+- Return ONLY valid JSON with keys "title" and "content". No explanations.`
+
+  const prompt = `Adapt this legal page from English to ${lang} for a luxury Greek island villa rental company.
 
 Title: ${title}
 
 Content:
-${content}`
+${content}
+
+Return JSON: { "title": "...", "content": "..." }`
 
   const res = await fetch("https://api.deepseek.com/chat/completions", {
     method: "POST",
@@ -31,7 +40,10 @@ ${content}`
     },
     body: JSON.stringify({
       model: "deepseek-chat",
-      messages: [{ role: "user", content: prompt }],
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: prompt },
+      ],
       response_format: { type: "json_object" },
       temperature: 0.3,
     }),
