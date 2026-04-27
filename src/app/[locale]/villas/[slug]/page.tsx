@@ -10,6 +10,8 @@ import VillaBookingButton from "@/components/villa/VillaBookingButton"
 import VillaGallery from "@/components/villa/VillaGallery"
 import JsonLd from "@/components/primitives/JsonLd"
 
+export const dynamic = "force-dynamic"
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params
   const [seo, villa] = await Promise.all([

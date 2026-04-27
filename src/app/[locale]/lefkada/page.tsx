@@ -6,6 +6,8 @@ import MotionInit from "@/components/chrome/MotionInit"
 import { prisma } from "@/lib/prisma"
 import { getPageSeo, buildMetadata } from "@/lib/seo"
 
+export const dynamic = "force-dynamic"
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
   const seo = await getPageSeo("lefkada", locale)

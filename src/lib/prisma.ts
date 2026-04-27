@@ -8,4 +8,6 @@ export const prisma =
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
   })
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
+// Cache the singleton on globalThis in ALL environments — prevents new PrismaClient
+// instances per request in production, which exhausts the connection pool.
+globalForPrisma.prisma = prisma
