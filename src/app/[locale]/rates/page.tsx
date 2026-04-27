@@ -73,27 +73,27 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
       <MotionInit />
 
       {/* Page header */}
-      <section className="x-page-header-dark" style={{ padding: "160px 48px 100px", background: "var(--color-bg-deep)", color: "white", position: "relative", overflow: "hidden" }}>
+      <section className="x-page-header-dark" style={{ padding: "100px 48px 72px", background: "var(--color-bg-deep)", color: "white", position: "relative", overflow: "hidden" }}>
         {/* Ghost text */}
         <div style={{
-          position: "absolute", right: 32, bottom: -60,
-          fontFamily: "var(--font-display)", fontSize: "clamp(140px, 24vw, 340px)",
+          position: "absolute", right: 32, bottom: -40,
+          fontFamily: "var(--font-display)", fontSize: "clamp(80px, 14vw, 200px)",
           fontWeight: 300, fontStyle: "italic",
           color: "rgba(255,255,255,0.04)",
           lineHeight: 1, userSelect: "none", pointerEvents: "none",
         }}>€</div>
 
         <div className="x-stagger" style={{ maxWidth: 720, position: "relative", zIndex: 1 }}>
-          <div className="mono-label" style={{ color: "var(--color-accent)", marginBottom: 24 }}>Lefkada · Apr — Oct</div>
+          <div className="mono-label" style={{ color: "var(--color-accent)", marginBottom: 20 }}>Lefkada · Apr — Oct</div>
           <h1 style={{
-            fontFamily: "var(--font-display)", fontSize: "clamp(64px, 10vw, 150px)",
-            lineHeight: 0.93, letterSpacing: "-0.025em", fontWeight: 300, margin: "0 0 32px",
+            fontFamily: "var(--font-display)", fontSize: "clamp(40px, 5vw, 72px)",
+            lineHeight: 1.05, letterSpacing: "-0.02em", fontWeight: 300, margin: "0 0 24px",
           }}>
-            {t("heading")}<br /><em>{t("subheading")}</em>
+            {t("heading")}&ensp;<em>{t("subheading")}</em>
           </h1>
           <p style={{
-            fontSize: 18, lineHeight: 1.8, color: "rgba(255,255,255,0.4)",
-            maxWidth: 520, margin: 0,
+            fontSize: 16, lineHeight: 1.8, color: "rgba(255,255,255,0.4)",
+            maxWidth: 480, margin: 0,
           }}>
             {t("headerNote")}
           </p>
@@ -158,17 +158,16 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
               )}
             </div>
 
-            {/* Rate rows */}
+            {/* Rate rows — weekly only */}
             <div style={{ borderTop: "1px solid var(--color-rule)" }}>
               <div className="x-rate-header" style={{
                 display: "grid",
-                gridTemplateColumns: "1fr 180px 180px",
+                gridTemplateColumns: "1fr 200px",
                 padding: "16px 0",
                 borderBottom: "1px solid var(--color-rule)",
               }}>
                 <div className="mono-label">{t("season")}</div>
                 <div className="mono-label">{t("weekly")}</div>
-                <div className="mono-label">{t("nightly")}</div>
               </div>
 
               {v.rates.map(r => (
@@ -177,29 +176,21 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
                   className="x-rate-row"
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "1fr 180px 180px",
-                    padding: "28px 0",
+                    gridTemplateColumns: "1fr 200px",
+                    padding: "24px 0",
                     borderBottom: "1px solid var(--color-rule)",
                     alignItems: "baseline",
                   }}
                 >
-                  <div style={{ fontSize: 18, color: "var(--color-ink)" }}>{r.season}</div>
+                  <div style={{ fontSize: 17, color: "var(--color-ink)" }}>{r.season}</div>
                   <div style={{
                     fontFamily: "var(--font-display)",
-                    fontSize: "clamp(24px, 2.5vw, 36px)",
+                    fontSize: "clamp(22px, 2vw, 32px)",
                     fontStyle: "italic",
                     letterSpacing: "-0.01em",
                     color: "var(--color-ink)",
                   }}>
                     €{r.weekly.toLocaleString()}
-                  </div>
-                  <div style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: 20,
-                    color: "var(--color-ink-soft)",
-                    fontStyle: "italic",
-                  }}>
-                    €{r.nightly.toLocaleString()}
                   </div>
                 </div>
               ))}
