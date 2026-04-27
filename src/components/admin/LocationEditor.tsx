@@ -601,7 +601,7 @@ export default function LocationEditor({ location }: { location: Location }) {
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div>
-              <Label className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Image URL (BunnyCDN or Strapi)</Label>
+              <Label className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Image URL (BunnyCDN)</Label>
               <Input value={newImageUrl} onChange={e => setNewImageUrl(e.target.value)} placeholder="https://…" />
             </div>
             <div>

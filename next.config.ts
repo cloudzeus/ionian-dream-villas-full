@@ -8,7 +8,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "ioniandreamvillas.b-cdn.net" },
       { protocol: "https", hostname: "storage.bunnycdn.com" },
-      { protocol: "https", hostname: "ionianback.wwa.gr" },
     ],
   },
   experimental: {

@@ -62,7 +62,7 @@ export default function HeroSlideshow({ locale, villas, slides }: Props) {
       <div className="x-hero-bg" style={{ position: "absolute", inset: "-15% 0", background: "linear-gradient(135deg, #1C3848 0%, #0e1e28 100%)" }}>
         {images.map((img, i) => (
           <Image
-            key={img.src}
+            key={i}
             src={img.src}
             alt="Lefkada · Ionian Sea"
             fill

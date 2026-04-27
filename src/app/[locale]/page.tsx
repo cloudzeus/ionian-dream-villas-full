@@ -7,13 +7,12 @@ import MarqueeSection from "@/components/home/MarqueeSection"
 import PlacesGrid from "@/components/home/PlacesGrid"
 import ClosingSection from "@/components/home/ClosingSection"
 import MotionInit from "@/components/chrome/MotionInit"
-import { getPosts, imgUrl } from "@/lib/strapi"
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: "home" })
 
-  const [villas, strapiPosts, heroSlides] = await Promise.all([
+  const [villas, locationRows, heroSlides] = await Promise.all([
     prisma.villa.findMany({
       where: { published: true },
       orderBy: { sortOrder: "asc" },
@@ -23,19 +22,31 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         rates: { orderBy: { sortOrder: "asc" }, take: 1 },
       },
     }),
-    getPosts(locale),
+    prisma.location.findMany({
+      where: { published: true },
+      orderBy: { sortOrder: "asc" },
+      take: 6,
+      include: {
+        translations: { where: { locale: locale as any } },
+        images: { orderBy: { sortOrder: "asc" }, take: 1 },
+      },
+    }),
     prisma.heroSlide.findMany({
       where: { active: true },
       orderBy: { sortOrder: "asc" },
     }),
   ])
 
-  const locations = strapiPosts.slice(0, 6).map((post, i) => ({
-    slug: post.slug,
-    tone: ["sea", "sand", "stone", "sea", "sand", "stone"][i] as "sea" | "sand" | "stone",
-    translations: [{ name: post.title, nameLocal: post.title, kind: post.type, short: post.shordDescription }],
-    images: post.images[0] ? [{ url: imgUrl(post.images[0].formats?.large?.url ?? post.images[0].url) }] : [],
-  }))
+  const tones = ["sea", "sand", "stone", "sea", "sand", "stone"] as const
+  const locations = locationRows.map((loc, i) => {
+    const tr = loc.translations[0]
+    return {
+      slug: loc.slug,
+      tone: tones[i % tones.length],
+      translations: [{ name: tr?.name ?? loc.slug, nameLocal: tr?.nameLocal ?? undefined, kind: tr?.kind ?? "", short: tr?.short ?? "" }],
+      images: loc.images[0] ? [{ url: loc.images[0].url }] : [],
+    }
+  })
 
   return (
     <>
