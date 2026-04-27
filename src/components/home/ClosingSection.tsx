@@ -9,7 +9,7 @@ export default function ClosingSection({
 }) {
   return (
     <section
-      className="x-fade"
+      className="x-fade x-closing-section"
       style={{
         background: "var(--color-bg-deep)", color: "white",
         padding: "140px 48px",

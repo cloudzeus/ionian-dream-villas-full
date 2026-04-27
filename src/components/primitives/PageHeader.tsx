@@ -9,6 +9,7 @@ export default function PageHeader({
 }) {
   return (
     <header
+      className="x-page-header"
       style={{
         paddingTop: 160,
         paddingBottom: 80,

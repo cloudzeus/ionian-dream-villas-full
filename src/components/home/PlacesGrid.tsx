@@ -21,6 +21,7 @@ export default function PlacesGrid({ locations, locale }: { locations: LocationD
   useEffect(() => {
     if (!sectionRef.current || !trackRef.current) return
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    if (window.innerWidth < 768) return // vertical grid on mobile
 
     const section = sectionRef.current
     const track = trackRef.current
@@ -71,10 +72,11 @@ export default function PlacesGrid({ locations, locale }: { locations: LocationD
   return (
     <section
       ref={sectionRef}
+      className="x-places-scroll-section"
       style={{ position: "relative", overflow: "hidden", height: "100vh" }}
     >
       {/* Header — fixed left side */}
-      <div style={{
+      <div className="x-places-scroll-header" style={{
         position: "absolute", top: 0, left: 0, bottom: 0,
         width: 320, zIndex: 2, padding: "0 48px",
         display: "flex", flexDirection: "column", justifyContent: "center",
@@ -109,6 +111,7 @@ export default function PlacesGrid({ locations, locale }: { locations: LocationD
       {/* Horizontal track */}
       <div
         ref={trackRef}
+        className="x-places-scroll-track"
         style={{
           display: "flex",
           alignItems: "center",

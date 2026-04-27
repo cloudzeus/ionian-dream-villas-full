@@ -34,7 +34,7 @@ export default async function LefkadaPage({ params }: { params: Promise<{ locale
       <MotionInit />
 
       {/* Page header */}
-      <section style={{ padding: "160px 48px 100px", background: "var(--color-bg-deep)", color: "white", overflow: "hidden", position: "relative" }}>
+      <section className="x-page-header-dark" style={{ padding: "160px 48px 100px", background: "var(--color-bg-deep)", color: "white", overflow: "hidden", position: "relative" }}>
         <div style={{
           position: "absolute", right: 48, bottom: -40,
           fontFamily: "var(--font-display)", fontSize: "clamp(160px, 28vw, 400px)",
@@ -151,8 +151,8 @@ export default async function LefkadaPage({ params }: { params: Promise<{ locale
 
       {/* Rest — 3-col magazine grid */}
       {rest.length > 0 && (
-        <section style={{ padding: "0 48px 120px" }}>
-          <div style={{
+        <section className="x-places-grid-section" style={{ padding: "0 48px 120px" }}>
+          <div className="x-places-grid-inner" style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
             gap: "1px",

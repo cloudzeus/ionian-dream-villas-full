@@ -65,7 +65,7 @@ export default function VillaGallery({ images, villaName }: { images: GalleryIma
 
         {/* Grid of rest */}
         {rest.length > 0 && (
-          <div style={{
+          <div className="x-gallery-grid" style={{
             display: "grid",
             gridTemplateColumns: `repeat(${Math.min(rest.length, 4)}, 1fr)`,
             gap: 4,

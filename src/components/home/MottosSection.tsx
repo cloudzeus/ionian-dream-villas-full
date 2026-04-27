@@ -6,7 +6,7 @@ export default function MottosSection({ t }: { t: { mottos: Motto[] } }) {
       {t.mottos.map((m, i) => (
         <div
           key={i}
-          className="x-fade"
+          className="x-fade x-motto-row"
           style={{
             display: "grid",
             gridTemplateColumns: "120px 1fr 1fr",
@@ -17,7 +17,7 @@ export default function MottosSection({ t }: { t: { mottos: Motto[] } }) {
           }}
         >
           {/* Number */}
-          <div style={{
+          <div className="x-motto-number" style={{
             fontFamily: "var(--font-display)",
             fontSize: "clamp(64px, 8vw, 120px)",
             fontWeight: 300,

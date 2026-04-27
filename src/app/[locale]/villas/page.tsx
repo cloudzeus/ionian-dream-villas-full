@@ -32,7 +32,7 @@ export default async function VillasPage({ params }: { params: Promise<{ locale:
       <MotionInit />
 
       {/* Page header */}
-      <section style={{ padding: "160px 48px 80px", background: "var(--color-bg-deep)", color: "white" }}>
+      <section className="x-page-header-dark" style={{ padding: "160px 48px 80px", background: "var(--color-bg-deep)", color: "white" }}>
         <div className="x-stagger" style={{ maxWidth: 700 }}>
           <div className="mono-label" style={{ color: "var(--color-accent)", marginBottom: 24 }}>Ionian Dream · Three villas</div>
           <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(56px, 9vw, 140px)", lineHeight: 0.93, letterSpacing: "-0.025em", fontWeight: 300, margin: "0 0 24px" }}>

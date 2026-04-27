@@ -182,7 +182,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
       </section>
 
       {/* Long description + sidebar */}
-      <section className="x-fade" style={{
+      <section className="x-fade x-location-about" style={{
         padding: "100px 48px",
         display: "grid",
         gridTemplateColumns: "1.5fr 1fr",
@@ -230,14 +230,14 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
 
       {/* Gallery */}
       {galleryImages.length > 0 && (
-        <section className="x-fade" style={{ padding: "100px 48px" }}>
+        <section className="x-fade x-location-gallery" style={{ padding: "100px 48px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 48 }}>
             <div className="mono-label" style={{ color: "var(--color-accent)" }}>Gallery</div>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--color-ink-soft)" }}>
               {galleryImages.length} images
             </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 4 }}>
+          <div className="x-location-gallery-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 4 }}>
             {galleryImages.map((img, i) => (
               <div key={img.id} style={{
                 overflow: "hidden",
@@ -258,7 +258,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
       )}
 
       {/* Dark CTA */}
-      <section className="x-fade" style={{
+      <section className="x-fade x-location-cta" style={{
         background: "var(--color-bg-deep)", color: "white",
         padding: "120px 48px",
         display: "grid",

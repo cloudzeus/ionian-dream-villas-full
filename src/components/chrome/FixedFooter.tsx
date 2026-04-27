@@ -5,14 +5,12 @@ export default function FixedFooter() {
   const t = useTranslations("footer")
   return (
     <>
-      {/* Spacer so footer doesn't cover last content */}
       <div style={{ height: 64 }} />
       <footer
+        className="x-fixed-footer"
         style={{
           position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
+          bottom: 0, left: 0, right: 0,
           zIndex: 40,
           background: "var(--color-bg-deep)",
           color: "rgba(247,244,238,0.7)",
@@ -27,7 +25,7 @@ export default function FixedFooter() {
         <span className="mono-label" style={{ color: "rgba(247,244,238,0.5)" }}>
           {t("copy")}
         </span>
-        <span className="mono-label" style={{ color: "rgba(247,244,238,0.5)" }}>
+        <span className="x-fixed-footer-location mono-label" style={{ color: "rgba(247,244,238,0.5)" }}>
           {t("location")}
         </span>
         <a

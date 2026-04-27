@@ -38,7 +38,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
       <MotionInit />
 
       {/* Page header */}
-      <section style={{ padding: "160px 48px 100px", background: "var(--color-bg-deep)", color: "white", position: "relative", overflow: "hidden" }}>
+      <section className="x-page-header-dark" style={{ padding: "160px 48px 100px", background: "var(--color-bg-deep)", color: "white", position: "relative", overflow: "hidden" }}>
         {/* Ghost text */}
         <div style={{
           position: "absolute", right: 32, bottom: -60,
@@ -73,7 +73,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
         return (
           <section
             key={v.slug}
-            className="x-fade"
+            className="x-fade x-rate-section"
             style={{
               borderTop: "1px solid var(--color-rule)",
               padding: "100px 48px",
@@ -81,7 +81,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
             }}
           >
             {/* Villa header */}
-            <div style={{
+            <div className="x-rate-villa-header" style={{
               display: "grid",
               gridTemplateColumns: cover ? "1fr auto" : "1fr",
               gap: 60,
@@ -127,7 +127,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
             {/* Rate rows */}
             <div style={{ borderTop: "1px solid var(--color-rule)" }}>
               {/* Header row */}
-              <div style={{
+              <div className="x-rate-header" style={{
                 display: "grid",
                 gridTemplateColumns: "1fr 180px 180px",
                 padding: "16px 0",
@@ -141,6 +141,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
               {v.rates.map((r, ri) => (
                 <div
                   key={r.id}
+                  className="x-rate-row"
                   style={{
                     display: "grid",
                     gridTemplateColumns: "1fr 180px 180px",
@@ -214,9 +215,9 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
       })}
 
       {/* Terms */}
-      <section className="x-fade" style={{ padding: "100px 48px", borderTop: "1px solid var(--color-rule)" }}>
+      <section className="x-fade x-terms-section" style={{ padding: "100px 48px", borderTop: "1px solid var(--color-rule)" }}>
         <div className="mono-label" style={{ color: "var(--color-accent)", marginBottom: 48 }}>{t("terms")}</div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px 80px" }}>
+        <div className="x-terms-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px 80px" }}>
           {Object.entries(RATE_TERMS).map(([k, val]) => (
             <div key={k} style={{ borderTop: "1px solid var(--color-rule)", paddingTop: 24 }}>
               <div style={{
@@ -230,7 +231,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
       </section>
 
       {/* Dark CTA */}
-      <section className="x-fade" style={{
+      <section className="x-fade x-rates-cta" style={{
         background: "var(--color-bg-deep)", color: "white",
         padding: "120px 48px",
         display: "grid",

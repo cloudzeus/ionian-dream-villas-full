@@ -121,13 +121,13 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(14,30,40,0.5) 0%, transparent 55%)", zIndex: 1 }} />
 
         {/* Top bar */}
-        <div style={{ position: "absolute", top: 100, left: 48, right: 48, zIndex: 3, display: "flex", justifyContent: "space-between" }}>
+        <div className="x-hero-topbar" style={{ position: "absolute", top: 100, left: 48, right: 48, zIndex: 3, display: "flex", justifyContent: "space-between" }}>
           <div className="x-hero-meta mono-label" style={{ color: "rgba(255,255,255,0.5)", letterSpacing: "0.18em" }}>Villa · Lefkada · Greece</div>
           <div className="x-hero-meta mono-label" style={{ color: "rgba(255,255,255,0.5)", letterSpacing: "0.18em" }}>{tr?.region}</div>
         </div>
 
         {/* Title */}
-        <div style={{ position: "absolute", left: 48, right: "30%", bottom: "20vh", zIndex: 3 }}>
+        <div className="x-hero-text" style={{ position: "absolute", left: 48, right: "30%", bottom: "20vh", zIndex: 3 }}>
           <h1 style={{ margin: "0 0 12px", fontFamily: "var(--font-display)", fontWeight: 300, letterSpacing: "-0.025em", lineHeight: 0.92, fontSize: "clamp(56px, 10vw, 180px)" }}>
             <span className="x-hero-line" style={{ display: "block" }}>{tr?.name || slug}</span>
           </h1>
@@ -153,8 +153,8 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
       </section>
 
       {/* ── SPECS STRIP ──────────────────────────────────────────────────── */}
-      <section style={{ background: "var(--color-bg-deep)", color: "white" }}>
-        <div className="x-stagger" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", padding: "0 48px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+      <section className="x-specs-strip" style={{ background: "var(--color-bg-deep)", color: "white" }}>
+        <div className="x-stagger x-specs-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", padding: "0 48px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
           {[
             [t("maxAdults"), `${villa.guests} guests`],
             [t("bedrooms"), `${villa.bedrooms} bedrooms`],
@@ -171,8 +171,8 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
       </section>
 
       {/* ── ABOUT ─────────────────────────────────────────────────────────── */}
-      <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "70vh" }}>
-        <div className="x-fade" style={{ padding: "96px 64px 96px 48px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+      <section className="x-villa-about" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "70vh" }}>
+        <div className="x-fade x-villa-about-text" style={{ padding: "96px 64px 96px 48px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <div className="mono-label" style={{ marginBottom: 24, color: "var(--color-accent)" }}>{t("aboutVilla")}</div>
           <div style={{ fontFamily: "var(--font-greek)", fontSize: "clamp(15px, 1.8vw, 22px)", color: "var(--color-sea)", marginBottom: 28, fontStyle: "italic" }}>
             Λευκάδα · {tr?.nameLocal}
@@ -184,7 +184,7 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
             {tr?.description}
           </p>
         </div>
-        <div className="x-clip-reveal" style={{ position: "relative", background: "#c0cdd4", minHeight: 520 }}>
+        <div className="x-clip-reveal x-villa-about-img" style={{ position: "relative", background: "#c0cdd4", minHeight: 520 }}>
           {villa.images[1] && (
             <Image src={villa.images[1].url} alt="" fill sizes="50vw" style={{ objectFit: "cover" }} />
           )}
@@ -192,9 +192,9 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
       </section>
 
       {/* ── ROOMS + RIGHT PANEL ───────────────────────────────────────────── */}
-      <section style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", borderTop: "1px solid var(--color-rule)" }}>
+      <section className="x-rooms-section" style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", borderTop: "1px solid var(--color-rule)" }}>
         {/* Rooms */}
-        <div className="x-fade" style={{ padding: "80px 64px 80px 48px", borderRight: "1px solid var(--color-rule)" }}>
+        <div className="x-fade x-rooms-panel" style={{ padding: "80px 64px 80px 48px", borderRight: "1px solid var(--color-rule)" }}>
           <div className="mono-label" style={{ marginBottom: 36, color: "var(--color-accent)" }}>{t("rooms")} · {villa.bedrooms} bedrooms</div>
           {villa.rooms.map((r, i) => {
             const rtr = r.translations[0]
@@ -215,7 +215,7 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
         </div>
 
         {/* Amenities, Views, Rates */}
-        <div className="x-fade" style={{ padding: "80px 48px" }}>
+        <div className="x-fade x-amenities-panel" style={{ padding: "80px 48px" }}>
           {tr?.view && (
             <div style={{ marginBottom: 48 }}>
               <div className="mono-label" style={{ marginBottom: 24, color: "var(--color-accent)" }}>{t("views")}</div>
@@ -270,7 +270,7 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
       )}
 
       {/* ── BOOK CTA ──────────────────────────────────────────────────────── */}
-      <section className="x-fade" style={{ background: "var(--color-bg-deep)", color: "white", padding: "120px 48px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
+      <section className="x-fade x-book-cta" style={{ background: "var(--color-bg-deep)", color: "white", padding: "120px 48px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
         <div>
           <div className="mono-label" style={{ marginBottom: 20, color: "var(--color-accent)" }}>Book your stay</div>
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(40px, 5.5vw, 90px)", lineHeight: 0.95, letterSpacing: "-0.025em", fontWeight: 300, margin: "0 0 20px" }}>
@@ -292,9 +292,9 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
 
       {/* ── OTHER VILLAS ──────────────────────────────────────────────────── */}
       {allVillas.length > 0 && (
-        <section style={{ padding: "80px 48px", borderTop: "1px solid var(--color-rule)" }}>
+        <section className="x-other-villas" style={{ padding: "80px 48px", borderTop: "1px solid var(--color-rule)" }}>
           <div className="mono-label" style={{ marginBottom: 40, color: "var(--color-accent)" }}>{t("otherVillas")}</div>
-          <div style={{ display: "grid", gridTemplateColumns: `repeat(${allVillas.length}, 1fr)`, gap: 32 }}>
+          <div className="x-other-villas-grid" style={{ display: "grid", gridTemplateColumns: `repeat(${allVillas.length}, 1fr)`, gap: 32 }}>
             {allVillas.map((v) => {
               const vtr = v.translations[0]
               const vImg = v.images[0]

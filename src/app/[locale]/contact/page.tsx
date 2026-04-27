@@ -62,7 +62,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
   return (
     <>
       <PageHeader eyebrow="Ionian Dream Villas" title={t("heading")} />
-      <section style={{ padding: "80px 40px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80 }}>
+      <section className="x-contact-section" style={{ padding: "80px 40px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80 }}>
         <div>
           <div className="mono-label" style={{ marginBottom: 24 }}>{t("left.heading")}</div>
           <p style={{ fontSize: 18, lineHeight: 1.8, color: "var(--color-ink-soft)", marginBottom: 60 }}>
