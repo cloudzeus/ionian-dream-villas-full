@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const { locale } = await params
   const seo = await getPageSeo("lefkada", locale)
   const cover = await prisma.locationImage.findFirst({ where: { isCover: true }, orderBy: { sortOrder: "asc" } })
-  return buildMetadata(seo, { path: `/${locale}/lefkada`, locale, image: cover?.url })
+  return await buildMetadata(seo, { path: `/${locale}/lefkada`, locale, image: cover?.url })
 }
 
 export default async function LefkadaPage({ params }: { params: Promise<{ locale: string }> }) {

@@ -30,6 +30,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url(`/${l}/lefkada`, 0.8, "weekly"),
     url(`/${l}/rates`, 0.7, "monthly"),
     url(`/${l}/contact`, 0.6, "monthly"),
+    url(`/${l}/terms`, 0.3, "yearly"),
+    url(`/${l}/privacy`, 0.3, "yearly"),
+    url(`/${l}/cookies`, 0.3, "yearly"),
   ])
 
   const villaPages = LOCALES.flatMap(l =>

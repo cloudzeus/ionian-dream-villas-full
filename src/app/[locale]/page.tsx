@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   if (!["en", "el", "de"].includes(locale)) return {}
   const seo = await getPageSeo("home", locale)
   const slide = await prisma.heroSlide.findFirst({ where: { active: true }, orderBy: { sortOrder: "asc" } })
-  return buildMetadata(seo, { path: `/${locale}`, locale, image: slide?.imageUrl })
+  return await buildMetadata(seo, { path: `/${locale}`, locale, image: slide?.imageUrl })
 }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {

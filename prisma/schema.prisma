@@ -354,6 +354,19 @@ model PageSeo {
   @@unique([pageKey, locale])
 }
 
+// ─── Legal Pages ──────────────────────────────────────────────────────────────
+
+model LegalPage {
+  id        String   @id @default(cuid())
+  pageKey   String   // "terms" | "privacy" | "cookies"
+  locale    Locale
+  title     String   @db.VarChar(200)
+  content   String   @db.LongText
+  updatedAt DateTime @updatedAt
+
+  @@unique([pageKey, locale])
+}
+
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
 enum Locale {

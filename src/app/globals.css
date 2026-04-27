@@ -478,3 +478,72 @@ html:has(.admin-root) {
 @media (min-width: 768px) {
   .x-mobile-menu { display: none !important; }
 }
+
+/* ── Legal page content ──────────────────────────────────────────────────── */
+.x-legal-content {
+  font-size: 17px;
+  line-height: 1.9;
+  color: var(--color-ink-soft);
+}
+.x-legal-content h2 {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.5vw, 32px);
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+  margin: 48px 0 16px;
+}
+.x-legal-content h2:first-child { margin-top: 0; }
+.x-legal-content p  { margin: 0 0 20px; }
+.x-legal-content a  { color: var(--color-accent); }
+.x-legal-content strong { font-weight: 600; color: var(--color-ink); }
+.x-legal-content ul,
+.x-legal-content ol { padding-left: 24px; margin: 0 0 20px; }
+.x-legal-content li { margin-bottom: 8px; }
+
+/* ── Site Footer ─────────────────────────────────────────────────────────── */
+.x-footer-link:hover { color: var(--color-accent) !important; }
+.x-footer-social:hover { color: var(--color-accent) !important; border-color: var(--color-accent) !important; }
+
+@media (max-width: 767px) {
+  .x-site-footer .x-footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+    padding: 48px 20px 40px !important;
+  }
+  .x-site-footer .x-footer-bottom {
+    padding: 16px 20px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  .x-cookie-banner {
+    padding: 16px 20px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .x-site-footer .x-footer-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 40px 40px !important;
+    padding: 56px 32px 40px !important;
+  }
+}
+
+/* Legal pages responsive */
+@media (max-width: 767px) {
+  .x-legal-content { font-size: 15px !important; }
+  [style*="paddingLeft: 48"] .x-legal-content,
+  [class*="x-legal"] { padding-left: 20px !important; padding-right: 20px !important; }
+}
+@media (max-width: 767px) {
+  div[style*="paddingTop: 140"][style*="paddingLeft: 48"] {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    padding-top: 100px !important;
+  }
+}

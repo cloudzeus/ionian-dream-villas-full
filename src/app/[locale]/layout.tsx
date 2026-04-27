@@ -3,7 +3,8 @@ import { getMessages } from "next-intl/server"
 import { notFound } from "next/navigation"
 import { routing } from "@/i18n/routing"
 import PageNav from "@/components/chrome/PageNav"
-import FixedFooter from "@/components/chrome/FixedFooter"
+import SiteFooter from "@/components/chrome/SiteFooter"
+import CookieBanner from "@/components/chrome/CookieBanner"
 import LangSetter from "@/components/chrome/LangSetter"
 
 export function generateStaticParams() {
@@ -26,7 +27,8 @@ export default async function LocaleLayout({
       <LangSetter locale={locale} />
       <PageNav locale={locale} />
       <main>{children}</main>
-      <FixedFooter />
+      <SiteFooter locale={locale} />
+      <CookieBanner />
     </NextIntlClientProvider>
   )
 }

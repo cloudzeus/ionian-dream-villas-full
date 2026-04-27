@@ -15,6 +15,7 @@ import {
   HelpCircleIcon,
   SearchIcon,
   PhoneIcon,
+  ScrollTextIcon,
 } from "lucide-react"
 
 import { NavMain } from "@/components/admin/NavMain"
@@ -43,6 +44,7 @@ const navItems = [
   { title: "Media", url: "/admin/media", icon: ImageIcon },
   { title: "SEO", url: "/admin/seo", icon: SearchIcon },
   { title: "Contact & Email", url: "/admin/contact-info", icon: PhoneIcon },
+  { title: "Legal Pages", url: "/admin/legal", icon: ScrollTextIcon },
   { title: "Users", url: "/admin/users", icon: UsersIcon },
   { title: "Settings", url: "/admin/settings", icon: SettingsIcon },
 ]

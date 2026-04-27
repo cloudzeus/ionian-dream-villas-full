@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title: seo.title || (tr?.name ? `${tr.name} — Lefkada Island Guide · Ionian Dream Villas` : seo.title),
     description: seo.description || tr?.short || seo.description,
   }
-  return buildMetadata(overriddenSeo, {
+  return await buildMetadata(overriddenSeo, {
     path: `/${locale}/lefkada/${slug}`,
     locale,
     image: cover?.url,

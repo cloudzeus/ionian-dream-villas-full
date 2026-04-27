@@ -8,7 +8,7 @@ import ContactForm from "@/components/forms/ContactForm"
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
   const seo = await getPageSeo("contact", locale)
-  return buildMetadata(seo, { path: `/${locale}/contact`, locale })
+  return await buildMetadata(seo, { path: `/${locale}/contact`, locale })
 }
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {

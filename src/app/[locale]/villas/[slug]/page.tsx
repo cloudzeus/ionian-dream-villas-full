@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     seo.title = seo.title || `${tr.name} — Luxury Villa · Lefkada, Greece`
     seo.description = seo.description || tr.blurb?.slice(0, 155) || ""
   }
-  return buildMetadata(seo, { path: `/${locale}/villas/${slug}`, locale, image })
+  return await buildMetadata(seo, { path: `/${locale}/villas/${slug}`, locale, image })
 }
 
 export async function generateStaticParams() {

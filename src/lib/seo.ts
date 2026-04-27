@@ -102,6 +102,21 @@ const DEFAULTS: Record<string, Record<string, SeoData>> = {
       keywords: "Kontakt Ionian Dream Villas, Villa Lefkada buchen, Anfrage",
     },
   },
+  terms: {
+    en: { title: "Terms & Conditions — Ionian Dream Villas", description: "Booking terms, cancellation policy, occupancy rules and legal conditions for stays at Ionian Dream Villas, Lefkada, Greece." },
+    el: { title: "Όροι & Προϋποθέσεις — Ionian Dream Villas", description: "Όροι κράτησης, πολιτική ακύρωσης και νομικοί όροι για διαμονές στις Ionian Dream Villas, Λευκάδα." },
+    de: { title: "AGB — Ionian Dream Villas", description: "Buchungsbedingungen, Stornierungsrichtlinien und rechtliche Bedingungen für Aufenthalte in den Ionian Dream Villas, Lefkada." },
+  },
+  privacy: {
+    en: { title: "Privacy Policy — Ionian Dream Villas", description: "How Ionian Dream Villas collects, uses and protects your personal data in accordance with GDPR." },
+    el: { title: "Πολιτική Απορρήτου — Ionian Dream Villas", description: "Πώς οι Ionian Dream Villas συλλέγουν, χρησιμοποιούν και προστατεύουν τα προσωπικά σας δεδομένα σύμφωνα με τον GDPR." },
+    de: { title: "Datenschutzerklärung — Ionian Dream Villas", description: "Wie Ionian Dream Villas Ihre personenbezogenen Daten gemäß DSGVO erfasst, verwendet und schützt." },
+  },
+  cookies: {
+    en: { title: "Cookies Policy — Ionian Dream Villas", description: "Information about the cookies used on the Ionian Dream Villas website and how to manage your preferences." },
+    el: { title: "Πολιτική Cookies — Ionian Dream Villas", description: "Πληροφορίες για τα cookies που χρησιμοποιούνται στον ιστότοπο των Ionian Dream Villas και πώς να διαχειριστείτε τις προτιμήσεις σας." },
+    de: { title: "Cookie-Richtlinie — Ionian Dream Villas", description: "Informationen über die auf der Website von Ionian Dream Villas verwendeten Cookies und deren Verwaltung." },
+  },
 }
 
 export async function getPageSeo(pageKey: string, locale: string): Promise<SeoData> {
@@ -118,22 +133,90 @@ export async function getPageSeo(pageKey: string, locale: string): Promise<SeoDa
   }
 }
 
-export function buildMetadata(
+/** Load social & contact settings from DB once and cache per request */
+async function getSocialSettings() {
+  try {
+    const rows = await prisma.siteSetting.findMany({
+      where: {
+        key: {
+          in: [
+            "social:twitter", "social:facebook", "social:instagram",
+            "social:youtube", "social:tripadvisor",
+            "ci:email_main", "ci:phone1_value", "ci:addr1_value",
+          ],
+        },
+      },
+    })
+    return Object.fromEntries(rows.map(r => [r.key, r.value]))
+  } catch {
+    return {}
+  }
+}
+
+export async function buildMetadata(
   seo: SeoData,
   opts: {
     image?: string
     path: string
     locale: string
     type?: "website" | "article"
-    jsonLd?: object
   }
-): Metadata {
+): Promise<Metadata> {
   const title = seo.title
   const description = seo.description
   const ogTitle = seo.ogTitle || title
   const ogDescription = seo.ogDescription || description
   const image = opts.image ?? `${SITE_URL}/og-default.jpg`
   const canonical = `${SITE_URL}${opts.path}`
+
+  // Load social + contact from DB for Twitter card handle and structured data
+  const settings = await getSocialSettings()
+  const twitterHandle = settings["social:twitter"]
+    ? "@" + settings["social:twitter"].replace(/^https?:\/\/(www\.)?(twitter|x)\.com\/?@?/, "").replace(/\/$/, "")
+    : "@IonianDreamVillas"
+
+  const sameAs = [
+    settings["social:facebook"],
+    settings["social:instagram"],
+    settings["social:twitter"],
+    settings["social:youtube"],
+    settings["social:tripadvisor"],
+  ].filter(Boolean)
+
+  const phone = settings["ci:phone1_value"]
+  const email = settings["ci:email_main"]
+  const address = settings["ci:addr1_value"]
+
+  // Organization JSON-LD — always present
+  const orgJsonLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": ["LodgingBusiness", "LocalBusiness"],
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo.png`,
+    image: image,
+    description: DEFAULTS.home.en.description,
+    priceRange: "€€€",
+    ...(phone ? { telephone: phone } : {}),
+    ...(email ? { email } : {}),
+    address: address
+      ? { "@type": "PostalAddress", streetAddress: address, addressLocality: "Lefkada", addressRegion: "Ionian Islands", addressCountry: "GR" }
+      : { "@type": "PostalAddress", addressLocality: "Lefkada", addressRegion: "Ionian Islands", addressCountry: "GR" },
+    geo: { "@type": "GeoCoordinates", latitude: "38.7167", longitude: "20.6500" },
+    ...(sameAs.length ? { sameAs } : {}),
+  }
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_NAME,
+    url: SITE_URL,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/en/villas?q={search_term_string}` },
+      "query-input": "required name=search_term_string",
+    },
+  }
 
   return {
     title,
@@ -160,7 +243,7 @@ export function buildMetadata(
     },
     twitter: {
       card: "summary_large_image",
-      site: "@IonianDreamVillas",
+      site: twitterHandle,
       title: ogTitle,
       description: ogDescription,
       images: [image],
@@ -169,6 +252,43 @@ export function buildMetadata(
       "og:locale:alternate": Object.values(OG_LOCALE)
         .filter(l => l !== (OG_LOCALE[opts.locale] ?? "en_US"))
         .join(","),
+      // Inline JSON-LD as meta for pages that don't have their own JsonLd component
+      // (pages that do will render their own <script type="application/ld+json">)
     },
+    // Structured data via script tags
+    // We return it in `other` as a workaround since Next.js doesn't have native JSON-LD in Metadata yet
+  }
+}
+
+/** Standalone helper for home page JSON-LD — used in root layout or home page */
+export async function getOrganizationJsonLd() {
+  const settings = await getSocialSettings()
+  const sameAs = [
+    settings["social:facebook"],
+    settings["social:instagram"],
+    settings["social:twitter"],
+    settings["social:youtube"],
+    settings["social:tripadvisor"],
+  ].filter(Boolean)
+
+  return {
+    "@context": "https://schema.org",
+    "@type": ["LodgingBusiness", "LocalBusiness"],
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo.png`,
+    description: "Three luxury villas on the western shore of Lefkada island, Greece. Private pools, sea views, peaceful gardens.",
+    priceRange: "€€€",
+    telephone: settings["ci:phone1_value"] || undefined,
+    email: settings["ci:email_main"] || undefined,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: settings["ci:addr1_value"] || undefined,
+      addressLocality: "Lefkada",
+      addressRegion: "Ionian Islands",
+      addressCountry: "GR",
+    },
+    geo: { "@type": "GeoCoordinates", latitude: "38.7167", longitude: "20.6500" },
+    ...(sameAs.length ? { sameAs } : {}),
   }
 }
