@@ -367,10 +367,65 @@ model LegalPage {
   @@unique([pageKey, locale])
 }
 
+// ─── Rate Terms ───────────────────────────────────────────────────────────────
+
+model RateTerm {
+  id        String   @id @default(cuid())
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations RateTermTranslation[]
+}
+
+model RateTermTranslation {
+  id     String   @id @default(cuid())
+  termId String
+  locale Locale
+  label  String   @db.VarChar(200)
+  body   String   @db.Text
+  term   RateTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
+
+  @@unique([termId, locale])
+}
+
+// ─── Extra Fees ───────────────────────────────────────────────────────────────
+
+model RateFee {
+  id        String      @id @default(cuid())
+  amount    Float       @default(0)
+  unit      FeeUnit     @default(per_stay)
+  mandatory Boolean     @default(true)
+  sortOrder Int         @default(0)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  translations RateFeeTranslation[]
+}
+
+model RateFeeTranslation {
+  id     String  @id @default(cuid())
+  feeId  String
+  locale Locale
+  label  String  @db.VarChar(200)
+  note   String  @default("") @db.VarChar(400)
+  fee    RateFee @relation(fields: [feeId], references: [id], onDelete: Cascade)
+
+  @@unique([feeId, locale])
+}
+
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
 enum Locale {
   en
   el
   de
+}
+
+enum FeeUnit {
+  per_stay
+  per_day
+  per_week
+  per_person_night
+  per_person_stay
 }

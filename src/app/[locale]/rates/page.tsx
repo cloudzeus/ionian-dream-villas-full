@@ -12,26 +12,61 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return await buildMetadata(seo, { path: `/${locale}/rates`, locale })
 }
 
+const FEE_UNIT_LABELS: Record<string, Record<string, string>> = {
+  en: {
+    per_stay:         "per stay",
+    per_day:          "per day",
+    per_week:         "per week",
+    per_person_night: "per person / night",
+    per_person_stay:  "per person / stay",
+  },
+  el: {
+    per_stay:         "ανά διαμονή",
+    per_day:          "ανά ημέρα",
+    per_week:         "ανά εβδομάδα",
+    per_person_night: "ανά άτομο / διανυκτέρευση",
+    per_person_stay:  "ανά άτομο / διαμονή",
+  },
+  de: {
+    per_stay:         "pro Aufenthalt",
+    per_day:          "pro Tag",
+    per_week:         "pro Woche",
+    per_person_night: "pro Person / Nacht",
+    per_person_stay:  "pro Person / Aufenthalt",
+  },
+}
+
 export default async function RatesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: "rates" })
 
-  const RATE_TERMS: [string, string][] = [
-    [t("termsDeposit"), t("termsDepositBody")],
-    [t("termsIncluded"), t("termsIncludedBody")],
-    [t("termsCleaning"), t("termsCleaningBody")],
-    [t("termsMinStay"), t("termsMinStayBody")],
-  ]
+  const [villas, dbTerms, dbFees] = await Promise.all([
+    prisma.villa.findMany({
+      where: { published: true },
+      orderBy: { sortOrder: "asc" },
+      include: {
+        translations: { where: { locale: locale as any } },
+        rates: { orderBy: { sortOrder: "asc" } },
+        images: { where: { isCover: true }, take: 1 },
+      },
+    }),
+    prisma.rateTerm.findMany({
+      orderBy: { sortOrder: "asc" },
+      include: { translations: true },
+    }),
+    prisma.rateFee.findMany({
+      orderBy: { sortOrder: "asc" },
+      include: { translations: true },
+    }),
+  ])
 
-  const villas = await prisma.villa.findMany({
-    where: { published: true },
-    orderBy: { sortOrder: "asc" },
-    include: {
-      translations: { where: { locale: locale as any } },
-      rates: { orderBy: { sortOrder: "asc" } },
-      images: { where: { isCover: true }, take: 1 },
-    },
-  })
+  // Resolve translation for current locale, fall back to EN
+  function getTr<T extends { locale: string }>(translations: T[]): T | undefined {
+    return translations.find(t => t.locale === locale) ?? translations.find(t => t.locale === "en")
+  }
+
+  const unitLabel = (unit: string) =>
+    (FEE_UNIT_LABELS[locale] ?? FEE_UNIT_LABELS.en)[unit] ?? unit
 
   return (
     <>
@@ -60,7 +95,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
             fontSize: 18, lineHeight: 1.8, color: "rgba(255,255,255,0.4)",
             maxWidth: 520, margin: 0,
           }}>
-            Seven nights minimum. Private pools. All rates in euros, inclusive of VAT.
+            {t("headerNote")}
           </p>
         </div>
       </section>
@@ -110,7 +145,6 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
                 )}
               </div>
 
-              {/* Cover image thumbnail */}
               {cover && (
                 <div style={{ width: 200, height: 140, overflow: "hidden", flexShrink: 0 }}>
                   <Image
@@ -126,7 +160,6 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
 
             {/* Rate rows */}
             <div style={{ borderTop: "1px solid var(--color-rule)" }}>
-              {/* Header row */}
               <div className="x-rate-header" style={{
                 display: "grid",
                 gridTemplateColumns: "1fr 180px 180px",
@@ -138,7 +171,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
                 <div className="mono-label">{t("nightly")}</div>
               </div>
 
-              {v.rates.map((r, ri) => (
+              {v.rates.map(r => (
                 <div
                   key={r.id}
                   className="x-rate-row"
@@ -150,11 +183,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
                     alignItems: "baseline",
                   }}
                 >
-                  <div style={{
-                    fontSize: 18, color: "var(--color-ink)",
-                  }}>
-                    {r.season}
-                  </div>
+                  <div style={{ fontSize: 18, color: "var(--color-ink)" }}>{r.season}</div>
                   <div style={{
                     fontFamily: "var(--font-display)",
                     fontSize: "clamp(24px, 2.5vw, 36px)",
@@ -175,6 +204,38 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
                 </div>
               ))}
             </div>
+
+            {/* Extra fees inline (if any) */}
+            {dbFees.length > 0 && (
+              <div style={{ marginTop: 24 }}>
+                {dbFees.map(fee => {
+                  const ftr = getTr(fee.translations)
+                  if (!ftr?.label) return null
+                  return (
+                    <div
+                      key={fee.id}
+                      style={{
+                        display: "flex", alignItems: "baseline", gap: 16,
+                        padding: "10px 0",
+                        borderBottom: "1px dashed var(--color-rule)",
+                        fontSize: 14,
+                        color: "var(--color-ink-soft)",
+                      }}
+                    >
+                      <span style={{ flex: 1 }}>{ftr.label}{ftr.note ? ` — ${ftr.note}` : ""}</span>
+                      <span style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: 16, color: "var(--color-ink)" }}>
+                        €{fee.amount} <span style={{ fontSize: 12 }}>{unitLabel(fee.unit)}</span>
+                      </span>
+                      {!fee.mandatory && (
+                        <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-accent)" }}>
+                          {locale === "el" ? "Προαιρετικό" : locale === "de" ? "Optional" : "Optional"}
+                        </span>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
 
             {/* Villa CTA */}
             <div style={{ marginTop: 40, display: "flex", alignItems: "center", gap: 40 }}>
@@ -215,20 +276,26 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
       })}
 
       {/* Terms */}
-      <section className="x-fade x-terms-section" style={{ padding: "100px 48px", borderTop: "1px solid var(--color-rule)" }}>
-        <div className="mono-label" style={{ color: "var(--color-accent)", marginBottom: 48 }}>{t("terms")}</div>
-        <div className="x-terms-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px 80px" }}>
-          {RATE_TERMS.map(([k, val]) => (
-            <div key={k} style={{ borderTop: "1px solid var(--color-rule)", paddingTop: 24 }}>
-              <div style={{
-                fontFamily: "var(--font-display)", fontSize: 20, fontStyle: "italic",
-                marginBottom: 12, color: "var(--color-ink)",
-              }}>{k}</div>
-              <p style={{ fontSize: 16, lineHeight: 1.85, color: "var(--color-ink-soft)", margin: 0 }}>{val}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {dbTerms.length > 0 && (
+        <section className="x-fade x-terms-section" style={{ padding: "100px 48px", borderTop: "1px solid var(--color-rule)" }}>
+          <div className="mono-label" style={{ color: "var(--color-accent)", marginBottom: 48 }}>{t("terms")}</div>
+          <div className="x-terms-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px 80px" }}>
+            {dbTerms.map(term => {
+              const ttr = getTr(term.translations)
+              if (!ttr?.label) return null
+              return (
+                <div key={term.id} style={{ borderTop: "1px solid var(--color-rule)", paddingTop: 24 }}>
+                  <div style={{
+                    fontFamily: "var(--font-display)", fontSize: 20, fontStyle: "italic",
+                    marginBottom: 12, color: "var(--color-ink)",
+                  }}>{ttr.label}</div>
+                  <p style={{ fontSize: 16, lineHeight: 1.85, color: "var(--color-ink-soft)", margin: 0 }}>{ttr.body}</p>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Dark CTA */}
       <section className="x-fade x-rates-cta" style={{
