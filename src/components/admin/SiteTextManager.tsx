@@ -62,15 +62,32 @@ const VILLA_FIELDS = [
   { key: "villa.stayClose", label: "CTA — \"Stay close\" text", rows: 1 },
 ]
 
+const FOOTER_FIELDS = [
+  { key: "footer.tagline", label: "Brand tagline", rows: 2 },
+  { key: "footer.established", label: "Established label (e.g. Est. 2013)", rows: 1 },
+  { key: "footer.explore", label: "Navigation column heading", rows: 1 },
+  { key: "footer.contact", label: "Contact column heading", rows: 1 },
+  { key: "footer.legal", label: "Legal column heading", rows: 1 },
+  { key: "footer.rights", label: "Copyright rights text", rows: 1 },
+  { key: "footer.nav.villas", label: "Nav — Villas", rows: 1 },
+  { key: "footer.nav.rates", label: "Nav — Rates", rows: 1 },
+  { key: "footer.nav.lefkada", label: "Nav — Lefkada / Island Guide", rows: 1 },
+  { key: "footer.nav.contact", label: "Nav — Contact", rows: 1 },
+  { key: "footer.links.terms", label: "Legal link — Terms", rows: 1 },
+  { key: "footer.links.privacy", label: "Legal link — Privacy", rows: 1 },
+  { key: "footer.links.cookies", label: "Legal link — Cookies", rows: 1 },
+]
+
 const SECTIONS: { label: string; fields: typeof GENERAL_FIELDS }[] = [
   { label: "General (Homepage)", fields: GENERAL_FIELDS },
   { label: "Mottos", fields: MOTTO_FIELDS },
   { label: "Rates Page Terms", fields: RATES_FIELDS },
   { label: "Location Pages", fields: LOCATION_FIELDS },
   { label: "Villa Pages", fields: VILLA_FIELDS },
+  { label: "Footer", fields: FOOTER_FIELDS },
 ]
 
-const ALL_FIELDS = [...GENERAL_FIELDS, ...MOTTO_FIELDS, ...RATES_FIELDS, ...LOCATION_FIELDS, ...VILLA_FIELDS]
+const ALL_FIELDS = [...GENERAL_FIELDS, ...MOTTO_FIELDS, ...RATES_FIELDS, ...LOCATION_FIELDS, ...VILLA_FIELDS, ...FOOTER_FIELDS]
 
 interface Props { initialValues: Record<string, string> }
 

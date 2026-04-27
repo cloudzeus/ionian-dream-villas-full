@@ -117,6 +117,23 @@
   "footer": {
     "copy": "© Ionian Dream Villas",
     "location": "Lefkada, Greece",
-    "email": "stay@ionian-dream-villas.com"
+    "email": "stay@ionian-dream-villas.com",
+    "tagline": "Three private luxury villas on the western shore of Lefkada island, Greece.",
+    "established": "Est. 2013",
+    "rights": "All rights reserved.",
+    "explore": "Explore",
+    "contact": "Contact",
+    "legal": "Legal",
+    "nav": {
+      "villas": "Villas",
+      "rates": "Rates",
+      "lefkada": "Lefkada",
+      "contact": "Contact"
+    },
+    "links": {
+      "terms": "Terms & Conditions",
+      "privacy": "Privacy Policy",
+      "cookies": "Cookies"
+    }
   }
 }

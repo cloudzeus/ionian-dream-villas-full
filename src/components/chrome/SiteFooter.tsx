@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { getTranslations } from "next-intl/server"
 import { prisma } from "@/lib/prisma"
 
 interface Props {
@@ -14,6 +15,8 @@ const SOCIAL_ICONS: Record<string, string> = {
 }
 
 export default async function SiteFooter({ locale }: Props) {
+  const t = await getTranslations({ locale, namespace: "footer" })
+
   // Load social + contact data from DB
   const keys = [
     "social:instagram", "social:facebook", "social:twitter", "social:youtube", "social:tripadvisor",
@@ -35,16 +38,16 @@ export default async function SiteFooter({ locale }: Props) {
   const address = db["ci:addr1_value"]
 
   const navLinks = [
-    { label: locale === "el" ? "Βίλες" : locale === "de" ? "Villen" : "Villas", href: `/${locale}/villas` },
-    { label: locale === "el" ? "Τιμές" : locale === "de" ? "Preise" : "Rates", href: `/${locale}/rates` },
-    { label: locale === "el" ? "Οδηγός" : locale === "de" ? "Lefkada" : "Lefkada", href: `/${locale}/lefkada` },
-    { label: locale === "el" ? "Επικοινωνία" : locale === "de" ? "Kontakt" : "Contact", href: `/${locale}/contact` },
+    { label: t("nav.villas"),  href: `/${locale}/villas` },
+    { label: t("nav.rates"),   href: `/${locale}/rates` },
+    { label: t("nav.lefkada"), href: `/${locale}/lefkada` },
+    { label: t("nav.contact"), href: `/${locale}/contact` },
   ]
 
   const legalLinks = [
-    { label: locale === "el" ? "Όροι Χρήσης" : locale === "de" ? "AGB" : "Terms & Conditions", href: `/${locale}/terms` },
-    { label: locale === "el" ? "Απόρρητο" : locale === "de" ? "Datenschutz" : "Privacy Policy", href: `/${locale}/privacy` },
-    { label: locale === "el" ? "Cookies" : "Cookies", href: `/${locale}/cookies` },
+    { label: t("links.terms"),   href: `/${locale}/terms` },
+    { label: t("links.privacy"), href: `/${locale}/privacy` },
+    { label: t("links.cookies"), href: `/${locale}/cookies` },
   ]
 
   const year = new Date().getFullYear()
@@ -70,17 +73,27 @@ export default async function SiteFooter({ locale }: Props) {
             fontFamily: "var(--font-display)",
             fontSize: 28, fontWeight: 300, fontStyle: "italic",
             letterSpacing: "-0.02em",
-            marginBottom: 16,
+            marginBottom: 6,
             color: "rgba(247,244,238,0.95)",
           }}>
             Ionian Dream<br />Villas
+          </div>
+          <div style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 9,
+            letterSpacing: "0.18em",
+            textTransform: "uppercase",
+            color: "var(--color-accent)",
+            marginBottom: 16,
+          }}>
+            {t("established")}
           </div>
           <p style={{
             fontSize: 13, lineHeight: 1.8,
             color: "rgba(255,255,255,0.4)",
             maxWidth: 280, marginBottom: 32,
           }}>
-            Three private luxury villas on the western shore of Lefkada island, Greece.
+            {t("tagline")}
           </p>
 
           {/* Social icons */}
@@ -113,7 +126,7 @@ export default async function SiteFooter({ locale }: Props) {
         {/* Navigation */}
         <div>
           <div className="mono-label" style={{ color: "var(--color-accent)", marginBottom: 20 }}>
-            {locale === "el" ? "Σελίδες" : locale === "de" ? "Seiten" : "Explore"}
+            {t("explore")}
           </div>
           <nav style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {navLinks.map(l => (
@@ -136,7 +149,7 @@ export default async function SiteFooter({ locale }: Props) {
         {/* Contact */}
         <div>
           <div className="mono-label" style={{ color: "var(--color-accent)", marginBottom: 20 }}>
-            {locale === "el" ? "Επικοινωνία" : locale === "de" ? "Kontakt" : "Contact"}
+            {t("contact")}
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {email && (
@@ -174,7 +187,7 @@ export default async function SiteFooter({ locale }: Props) {
         {/* Legal */}
         <div>
           <div className="mono-label" style={{ color: "var(--color-accent)", marginBottom: 20 }}>
-            {locale === "el" ? "Νομικά" : locale === "de" ? "Rechtliches" : "Legal"}
+            {t("legal")}
           </div>
           <nav style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {legalLinks.map(l => (
@@ -225,7 +238,7 @@ export default async function SiteFooter({ locale }: Props) {
           letterSpacing: "0.15em", textTransform: "uppercase",
           color: "rgba(255,255,255,0.2)",
         }}>
-          © {year} Ionian Dream Villas. All rights reserved.
+          {t("copy")} {year}. {t("rights")}
         </div>
         <div style={{ display: "flex", gap: 24 }}>
           {legalLinks.map(l => (

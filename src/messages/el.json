@@ -117,6 +117,23 @@
   "footer": {
     "copy": "© Ionian Dream Villas",
     "location": "Λευκάδα, Ελλάδα",
-    "email": "stay@ionian-dream-villas.com"
+    "email": "stay@ionian-dream-villas.com",
+    "tagline": "Τρεις ιδιωτικές πολυτελείς βίλες στη δυτική ακτή της Λευκάδας, Ελλάδα.",
+    "established": "Ίδρ. 2013",
+    "rights": "Με επιφύλαξη παντός δικαιώματος.",
+    "explore": "Σελίδες",
+    "contact": "Επικοινωνία",
+    "legal": "Νομικά",
+    "nav": {
+      "villas": "Βίλες",
+      "rates": "Τιμές",
+      "lefkada": "Λευκάδα",
+      "contact": "Επικοινωνία"
+    },
+    "links": {
+      "terms": "Όροι Χρήσης",
+      "privacy": "Απόρρητο",
+      "cookies": "Cookies"
+    }
   }
 }
