@@ -41,7 +41,11 @@
     "otherVillas": "Andere Villen",
     "aboutVilla": "Über die Villa",
     "bathroom1": "2 Badezimmer · Badewanne oder Dusche / WC",
-    "bathroom2": "1 Gäste-WC"
+    "bathroom2": "1 Gäste-WC",
+    "scroll": "Scrollen",
+    "islandGuide": "Inselführer",
+    "viewVillas": "Villen ansehen",
+    "stayClose": "Bleiben Sie nah. Erkunden Sie weiter."
   },
   "rates": {
     "heading": "Preise",
@@ -51,7 +55,19 @@
     "season": "Saison",
     "terms": "Bedingungen",
     "holdDate": "Datum sichern →",
-    "holdHeading": "Bereit ein Datum zu sichern?"
+    "holdHeading": "Bereit ein Datum zu sichern?",
+    "viewVilla": "Villa ansehen",
+    "enquire": "Anfragen",
+    "reservations": "Reservierungen",
+    "ctaBody": "Wir antworten innerhalb von 24 Stunden. Preise in Euro inklusive aller Steuern. Eine Anzahlung von 25% sichert Ihre Termine.",
+    "termsDeposit": "Anzahlung",
+    "termsDepositBody": "Eine Anzahlung von 25% sichert Ihre Woche; der Restbetrag ist dreißig Tage vor der Anreise fällig. Banküberweisung oder Kreditkarte.",
+    "termsIncluded": "Inklusive",
+    "termsIncludedBody": "Bettwäsche, Handtücher, Wäschewechsel zur Wochenmitte, Willkommenskorb aus dem Garten, täglicher Poolservice, Parkplatz, WLAN.",
+    "termsCleaning": "Reinigung",
+    "termsCleaningBody": "Eine Endreinigungsgebühr von 180€ wird erhoben. Tägliche Haushaltshilfe ist auf Anfrage erhältlich.",
+    "termsMinStay": "Mindestaufenthalt",
+    "termsMinStayBody": "Sieben Nächte von Ende Juni bis Anfang September. Fünf Nächte in der Nebensaison."
   },
   "contact": {
     "heading": "Kontakt",
@@ -87,7 +103,16 @@
     "subheading": "Fünf Orte, die es zu kennen gilt.",
     "readMore": "Mehr lesen →",
     "fromVilla": "Von der Villa",
-    "backToGuide": "← Zurück zum Reiseführer"
+    "backToGuide": "← Zurück zum Reiseführer",
+    "aboutPlace": "Über diesen Ort",
+    "gallery": "Galerie",
+    "details": "Details",
+    "stayClose": "Bleiben Sie nah. Erkunden Sie weiter.",
+    "viewVillas": "Villen ansehen",
+    "ionianDream": "Ionian Dream",
+    "scroll": "Scrollen",
+    "islandGuide": "Inselführer",
+    "images": "{count} Bilder"
   },
   "footer": {
     "copy": "© Ionian Dream Villas",

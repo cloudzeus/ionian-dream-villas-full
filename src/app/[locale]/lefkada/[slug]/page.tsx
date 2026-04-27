@@ -133,7 +133,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path d="M12 7H2M6 3L2 7l4 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            Island Guide
+            {t("islandGuide")}
           </Link>
           <div className="x-hero-meta mono-label" style={{ color: "rgba(255,255,255,0.5)", letterSpacing: "0.18em" }}>
             Lefkada · Greece
@@ -162,7 +162,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
           <div style={{
             writingMode: "vertical-rl", fontFamily: "var(--font-mono)", fontSize: 9,
             letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)",
-          }}>Scroll</div>
+          }}>{t("scroll")}</div>
           <div style={{ width: 1, height: 48, background: "rgba(255,255,255,0.2)", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "40%", background: "white", animation: "scrollLine 2s ease-in-out infinite" }} />
           </div>
@@ -191,7 +191,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
         borderBottom: "1px solid var(--color-rule)",
       }}>
         <div>
-          <div className="mono-label" style={{ marginBottom: 32, color: "var(--color-accent)" }}>About this place</div>
+          <div className="mono-label" style={{ marginBottom: 32, color: "var(--color-accent)" }}>{t("aboutPlace")}</div>
           <p style={{ fontSize: 18, lineHeight: 1.9, color: "var(--color-ink-soft)", maxWidth: 640, margin: 0 }}>
             {tr?.long}
           </p>
@@ -213,7 +213,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
           {/* Facts */}
           {location.facts.length > 0 && (
             <div style={{ borderTop: "1px solid var(--color-rule)", paddingTop: 32 }}>
-              <div className="mono-label" style={{ marginBottom: 24 }}>Details</div>
+              <div className="mono-label" style={{ marginBottom: 24 }}>{t("details")}</div>
               {location.facts.map(fact => {
                 const ft = fact.translations[0]
                 return ft ? (
@@ -232,9 +232,9 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
       {galleryImages.length > 0 && (
         <section className="x-fade x-location-gallery" style={{ padding: "100px 48px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 48 }}>
-            <div className="mono-label" style={{ color: "var(--color-accent)" }}>Gallery</div>
+            <div className="mono-label" style={{ color: "var(--color-accent)" }}>{t("gallery")}</div>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--color-ink-soft)" }}>
-              {galleryImages.length} images
+              {t("images", { count: galleryImages.length })}
             </div>
           </div>
           <div className="x-location-gallery-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 4 }}>
@@ -267,14 +267,14 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
         alignItems: "center",
       }}>
         <div>
-          <div className="mono-label" style={{ color: "var(--color-accent)", marginBottom: 20 }}>Ionian Dream</div>
+          <div className="mono-label" style={{ color: "var(--color-accent)", marginBottom: 20 }}>{t("ionianDream")}</div>
           <p style={{
             fontFamily: "var(--font-display)", fontStyle: "italic",
             fontSize: "clamp(28px, 3.5vw, 52px)",
             lineHeight: 1.2, margin: "0 0 40px",
             color: "rgba(247,244,238,0.9)", letterSpacing: "-0.01em",
           }}>
-            Stay close. Explore further.
+            {t("stayClose")}
           </p>
           <Link
             href={`/${locale}/villas`}
@@ -288,7 +288,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
             }}
             className="link-hover-light"
           >
-            View the villas
+            {t("viewVillas")}
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>

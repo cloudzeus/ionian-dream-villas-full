@@ -41,7 +41,11 @@
     "otherVillas": "Other villas",
     "aboutVilla": "About the villa",
     "bathroom1": "2 bathrooms · bathtub or shower / WC",
-    "bathroom2": "1 guest toilet"
+    "bathroom2": "1 guest toilet",
+    "scroll": "Scroll",
+    "islandGuide": "Island Guide",
+    "viewVillas": "View the villas",
+    "stayClose": "Stay close. Explore further."
   },
   "rates": {
     "heading": "Rates",
@@ -51,7 +55,19 @@
     "season": "Season",
     "terms": "Terms",
     "holdDate": "Hold a date →",
-    "holdHeading": "Ready to hold a date?"
+    "holdHeading": "Ready to hold a date?",
+    "viewVilla": "View villa",
+    "enquire": "Enquire",
+    "reservations": "Reservations",
+    "ctaBody": "We respond within 24 hours. Rates are in euros and include all taxes. A 25% deposit holds your dates — no charge until you're certain.",
+    "termsDeposit": "Deposit",
+    "termsDepositBody": "A 25% deposit secures your week; the balance is due thirty days before arrival. Bank transfer or major card.",
+    "termsIncluded": "Included",
+    "termsIncludedBody": "Linen, towels, mid-week refresh, welcome basket from the garden, daily pool service, parking, Wi-Fi.",
+    "termsCleaning": "Cleaning",
+    "termsCleaningBody": "A €180 end-of-stay cleaning fee applies. Daily housekeeping can be arranged on request.",
+    "termsMinStay": "Minimum stay",
+    "termsMinStayBody": "Seven nights from late June through early September. Five nights in shoulder season."
   },
   "contact": {
     "heading": "Contact",
@@ -87,7 +103,16 @@
     "subheading": "Five places worth knowing.",
     "readMore": "Read more →",
     "fromVilla": "From the villa",
-    "backToGuide": "← Back to the guide"
+    "backToGuide": "← Back to the guide",
+    "aboutPlace": "About this place",
+    "gallery": "Gallery",
+    "details": "Details",
+    "stayClose": "Stay close. Explore further.",
+    "viewVillas": "View the villas",
+    "ionianDream": "Ionian Dream",
+    "scroll": "Scroll",
+    "islandGuide": "Island Guide",
+    "images": "{count} images"
   },
   "footer": {
     "copy": "© Ionian Dream Villas",

@@ -12,16 +12,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return await buildMetadata(seo, { path: `/${locale}/rates`, locale })
 }
 
-const RATE_TERMS: Record<string, string> = {
-  "Deposit": "A 25% deposit secures your week; the balance is due thirty days before arrival. Bank transfer or major card.",
-  "Included": "Linen, towels, mid-week refresh, welcome basket from the garden, daily pool service, parking, Wi-Fi.",
-  "Cleaning": "A €180 end-of-stay cleaning fee applies. Daily housekeeping can be arranged on request.",
-  "Minimum stay": "Seven nights from late June through early September. Five nights in shoulder season.",
-}
-
 export default async function RatesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: "rates" })
+
+  const RATE_TERMS: [string, string][] = [
+    [t("termsDeposit"), t("termsDepositBody")],
+    [t("termsIncluded"), t("termsIncludedBody")],
+    [t("termsCleaning"), t("termsCleaningBody")],
+    [t("termsMinStay"), t("termsMinStayBody")],
+  ]
 
   const villas = await prisma.villa.findMany({
     where: { published: true },
@@ -189,7 +189,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
                 }}
                 className="link-hover-accent"
               >
-                View villa
+                {t("viewVilla")}
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                   <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -204,7 +204,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
                   borderBottom: "1px solid currentColor", paddingBottom: 4,
                 }}
               >
-                Enquire
+                {t("enquire")}
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                   <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -218,7 +218,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
       <section className="x-fade x-terms-section" style={{ padding: "100px 48px", borderTop: "1px solid var(--color-rule)" }}>
         <div className="mono-label" style={{ color: "var(--color-accent)", marginBottom: 48 }}>{t("terms")}</div>
         <div className="x-terms-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px 80px" }}>
-          {Object.entries(RATE_TERMS).map(([k, val]) => (
+          {RATE_TERMS.map(([k, val]) => (
             <div key={k} style={{ borderTop: "1px solid var(--color-rule)", paddingTop: 24 }}>
               <div style={{
                 fontFamily: "var(--font-display)", fontSize: 20, fontStyle: "italic",
@@ -240,7 +240,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
         alignItems: "center",
       }}>
         <div>
-          <div className="mono-label" style={{ color: "var(--color-accent)", marginBottom: 20 }}>Reservations</div>
+          <div className="mono-label" style={{ color: "var(--color-accent)", marginBottom: 20 }}>{t("reservations")}</div>
           <h2 style={{
             fontFamily: "var(--font-display)",
             fontSize: "clamp(36px, 5vw, 80px)",
@@ -274,7 +274,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
             color: "rgba(255,255,255,0.4)",
             margin: "0 0 32px",
           }}>
-            We respond within 24 hours. Rates are in euros and include all taxes. A 25% deposit holds your dates — no charge until you're certain.
+            {t("ctaBody")}
           </p>
           <div style={{
             fontFamily: "var(--font-mono)", fontSize: 9,
