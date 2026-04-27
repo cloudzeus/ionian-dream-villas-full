@@ -192,9 +192,41 @@ html:has(.admin-root) {
 ::-webkit-scrollbar-track { background: var(--color-bg-alt); }
 ::-webkit-scrollbar-thumb { background: var(--color-sea); }
 
+/* ── Admin shadcn tokens on :root so Radix portals (rendered at body level) inherit them ── */
+:root {
+  --background: 214 20% 94%;
+  --foreground: 215 25% 15%;
+  --card: 0 0% 100%;
+  --card-foreground: 215 25% 15%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 215 25% 15%;
+  --primary: 211 36% 38%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 214 20% 90%;
+  --secondary-foreground: 215 25% 15%;
+  --muted: 214 20% 92%;
+  --muted-foreground: 215 15% 50%;
+  --accent: 209 72% 59%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 214 20% 88%;
+  --input: 214 20% 88%;
+  --ring: 211 36% 38%;
+  --radius: 0.5rem;
+  --sidebar-background: 215 35% 12%;
+  --sidebar-foreground: 214 20% 75%;
+  --sidebar-primary: 211 36% 55%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 215 30% 18%;
+  --sidebar-accent-foreground: 214 20% 85%;
+  --sidebar-border: 215 30% 18%;
+  --sidebar-ring: 209 72% 59%;
+}
+
 /* ── Admin theme (scoped to .admin-root) ───────────────────────────────────── */
 .admin-root {
-  /* shadcn/ui HSL design tokens */
+  /* shadcn/ui HSL design tokens — same values as :root above, kept here for specificity */
   --background: 214 20% 94%;
   --foreground: 215 25% 15%;
   --card: 0 0% 100%;
