@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { getPageSeo, buildMetadata } from "@/lib/seo"
+import { getLegalDefault } from "@/lib/legal-defaults"
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
@@ -14,11 +15,13 @@ export default async function CookiesPage({ params }: { params: Promise<{ locale
 
   const page = await prisma.legalPage.findUnique({
     where: { pageKey_locale: { pageKey: "cookies", locale: locale as any } },
-  })
+  }).catch(() => null)
   const fallback = page ? null : await prisma.legalPage.findUnique({
     where: { pageKey_locale: { pageKey: "cookies", locale: "en" } },
-  })
-  const content = page || fallback
+  }).catch(() => null)
+  const dbContent = page || fallback
+  const staticDefault = getLegalDefault("cookies", locale)
+  const content = dbContent ?? (staticDefault ? { ...staticDefault, updatedAt: new Date(0) } : null)
   if (!content) notFound()
 
   return (
@@ -38,15 +41,17 @@ export default async function CookiesPage({ params }: { params: Promise<{ locale
         className="x-legal-content"
         dangerouslySetInnerHTML={{ __html: content.content }}
       />
-      <div style={{ marginTop: 64, borderTop: "1px solid var(--color-rule)", paddingTop: 24 }}>
-        <div style={{
-          fontFamily: "var(--font-mono)", fontSize: 9,
-          letterSpacing: "0.18em", textTransform: "uppercase",
-          color: "var(--color-ink-soft)",
-        }}>
-          Last updated: {new Date(content.updatedAt).toLocaleDateString(locale === "el" ? "el-GR" : locale === "de" ? "de-DE" : "en-GB", { year: "numeric", month: "long", day: "numeric" })}
+      {content.updatedAt.getTime() > 0 && (
+        <div style={{ marginTop: 64, borderTop: "1px solid var(--color-rule)", paddingTop: 24 }}>
+          <div style={{
+            fontFamily: "var(--font-mono)", fontSize: 9,
+            letterSpacing: "0.18em", textTransform: "uppercase",
+            color: "var(--color-ink-soft)",
+          }}>
+            Last updated: {new Date(content.updatedAt).toLocaleDateString(locale === "el" ? "el-GR" : locale === "de" ? "de-DE" : "en-GB", { year: "numeric", month: "long", day: "numeric" })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
