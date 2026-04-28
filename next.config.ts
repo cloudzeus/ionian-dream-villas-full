@@ -10,8 +10,16 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "storage.bunnycdn.com" },
     ],
   },
-  experimental: {
-    serverActions: { allowedOrigins: ["localhost:3000"] },
+  // X-Accel-Buffering: no tells Coolify's nginx proxy not to buffer streaming
+  // responses. Without this, RSC client-side navigation requests are buffered
+  // and dropped by the proxy, causing "This page couldn't load" on every Link click.
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [{ key: "X-Accel-Buffering", value: "no" }],
+      },
+    ]
   },
 }
 
