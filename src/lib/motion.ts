@@ -8,6 +8,8 @@ export async function initPageMotion(container: Element) {
   const { ScrollTrigger } = await import("gsap/ScrollTrigger")
   gsap.registerPlugin(ScrollTrigger)
 
+  const triggersBefore = new Set(ScrollTrigger.getAll())
+
   const ctx = gsap.context(() => {
 
     // ── Clip-reveal images ───────────────────────────────────────────────
@@ -86,7 +88,7 @@ export async function initPageMotion(container: Element) {
     })
 
     // ── Marquee ──────────────────────────────────────────────────────────
-    const marquee = document.querySelector<HTMLElement>(".x-marquee-track")
+    const marquee = container.querySelector<HTMLElement>(".x-marquee-track")
     if (marquee) {
       gsap.to(marquee, {
         xPercent: -50, ease: "none",
@@ -95,14 +97,14 @@ export async function initPageMotion(container: Element) {
     }
 
     // ── Hero load reveal ─────────────────────────────────────────────────
-    const heroLines = document.querySelectorAll(".x-hero-line")
+    const heroLines = container.querySelectorAll(".x-hero-line")
     if (heroLines.length) {
       gsap.fromTo(heroLines,
         { opacity: 0, y: 70 },
         { opacity: 1, y: 0, duration: 1.6, ease: "expo.out", stagger: 0.18, delay: 0.2 }
       )
     }
-    const heroMeta = document.querySelectorAll(".x-hero-meta")
+    const heroMeta = container.querySelectorAll(".x-hero-meta")
     if (heroMeta.length) {
       gsap.fromTo(heroMeta,
         { opacity: 0 },
@@ -111,8 +113,8 @@ export async function initPageMotion(container: Element) {
     }
 
     // ── Hero BG parallax on scroll ───────────────────────────────────────
-    const heroBg = document.querySelector<HTMLElement>(".x-hero-bg")
-    const heroSection = document.querySelector<HTMLElement>(".x-hero-section")
+    const heroBg = container.querySelector<HTMLElement>(".x-hero-bg")
+    const heroSection = container.querySelector<HTMLElement>(".x-hero-section")
     if (heroBg && heroSection) {
       gsap.to(heroBg, {
         yPercent: 22, ease: "none",
@@ -139,7 +141,11 @@ export async function initPageMotion(container: Element) {
   }, container)
 
   return () => {
-    ScrollTrigger.getAll().forEach(t => t.kill())
-    ctx.revert()
+    // Only kill triggers we created; never call ctx.revert() — it mutates
+    // React-owned nodes (inline styles) during unmount and corrupts the tree,
+    // causing Node.removeChild errors on client-side navigation.
+    for (const t of ScrollTrigger.getAll()) {
+      if (!triggersBefore.has(t)) t.kill()
+    }
   }
 }

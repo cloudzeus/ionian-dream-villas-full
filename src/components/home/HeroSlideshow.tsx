@@ -34,12 +34,11 @@ export default function HeroSlideshow({ locale, villas, slides }: Props) {
       : cover ? [{ src: cover.url, caption: "" }] : []
 
   const [active, setActive] = useState(0)
-  const [prev, setPrev] = useState<number | null>(null)
 
   useEffect(() => {
     if (images.length <= 1) return
     const id = setInterval(() => {
-      setActive(cur => { setPrev(cur); return (cur + 1) % images.length })
+      setActive(cur => (cur + 1) % images.length)
     }, 6000)
     return () => clearInterval(id)
   }, [images.length])
@@ -97,7 +96,7 @@ export default function HeroSlideshow({ locale, villas, slides }: Props) {
           {images.length > 1 && (
             <div style={{ display: "flex", gap: 8 }}>
               {images.map((_, i) => (
-                <button key={i} onClick={() => { setPrev(active); setActive(i) }}
+                <button key={i} onClick={() => setActive(i)}
                   style={{ width: i === active ? 24 : 6, height: 6, borderRadius: 3, border: "none", background: i === active ? "white" : "rgba(255,255,255,0.4)", cursor: "pointer", padding: 0, transition: "width 0.3s ease, background 0.3s ease" }}
                 />
               ))}
