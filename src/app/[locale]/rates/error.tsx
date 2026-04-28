@@ -2,10 +2,10 @@
 
 export default function RatesError({
   error,
-  reset,
+  unstable_retry,
 }: {
   error: Error & { digest?: string }
-  reset: () => void
+  unstable_retry: () => void
 }) {
   return (
     <div style={{
@@ -25,7 +25,7 @@ export default function RatesError({
         Something went wrong loading rates.
       </h2>
       <button
-        onClick={reset}
+        onClick={() => unstable_retry()}
         style={{
           fontFamily: "var(--font-mono)", fontSize: 10,
           letterSpacing: "0.2em", textTransform: "uppercase",

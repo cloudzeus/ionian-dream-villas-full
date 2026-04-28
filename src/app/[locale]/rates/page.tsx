@@ -42,6 +42,7 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: "rates" })
 
+  // Let DB errors throw → error.tsx auto-retry.
   const villas = await prisma.villa.findMany({
     where: { published: true },
     orderBy: { sortOrder: "asc" },
@@ -50,12 +51,16 @@ export default async function RatesPage({ params }: { params: Promise<{ locale: 
       rates: { orderBy: { sortOrder: "asc" } },
       images: { where: { isCover: true }, take: 1 },
     },
-  }).catch(() => [])
+  })
 
-  // These tables may not exist yet on older deployments — fail gracefully
+  // rateTerm/rateFee tables may not exist on older deployments. Distinguish that
+  // (P2021 — table not in schema) from a transient connection error: only swallow
+  // the schema-missing case; let connection errors throw to error.tsx.
   const [dbTerms, dbFees] = await Promise.all([
-    prisma.rateTerm.findMany({ orderBy: { sortOrder: "asc" }, include: { translations: true } }).catch(() => []),
-    prisma.rateFee.findMany({ orderBy: { sortOrder: "asc" }, include: { translations: true } }).catch(() => []),
+    prisma.rateTerm.findMany({ orderBy: { sortOrder: "asc" }, include: { translations: true } })
+      .catch((e: any) => { if (e?.code === "P2021") return []; throw e }),
+    prisma.rateFee.findMany({ orderBy: { sortOrder: "asc" }, include: { translations: true } })
+      .catch((e: any) => { if (e?.code === "P2021") return []; throw e }),
   ])
 
   // Resolve translation for current locale, fall back to EN

@@ -46,6 +46,8 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
   const { locale, slug } = await params
   const t = await getTranslations({ locale, namespace: "lefkada" })
 
+  // No .catch() here — DB errors must throw and trigger error.tsx (auto-retry UI).
+  // findUnique returns null only when the record genuinely doesn't exist → real 404.
   const location = await prisma.location.findUnique({
     where: { slug, published: true },
     include: {
@@ -56,7 +58,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
         include: { translations: { where: { locale: locale as any } } },
       },
     },
-  }).catch(() => null)
+  })
 
   if (!location) notFound()
 

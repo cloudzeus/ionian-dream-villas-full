@@ -1,8 +1,9 @@
 import type { Metadata } from "next"
-import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { getPageSeo, buildMetadata } from "@/lib/seo"
 import { getLegalDefault } from "@/lib/legal-defaults"
+
+export const dynamic = "force-dynamic"
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
@@ -13,6 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
 
+  // DB content is optional — these pages always render with bundled defaults.
   const page = await prisma.legalPage.findUnique({
     where: { pageKey_locale: { pageKey: "privacy", locale: locale as any } },
   }).catch(() => null)
@@ -20,9 +22,8 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
     where: { pageKey_locale: { pageKey: "privacy", locale: "en" } },
   }).catch(() => null)
   const dbContent = page || fallback
-  const staticDefault = getLegalDefault("privacy", locale)
-  const content = dbContent ?? (staticDefault ? { ...staticDefault, updatedAt: new Date(0) } : null)
-  if (!content) notFound()
+  const staticDefault = getLegalDefault("privacy", locale) || getLegalDefault("privacy", "en")!
+  const content = dbContent ?? { ...staticDefault, updatedAt: new Date(0) }
 
   return (
     <div style={{ paddingTop: 140, paddingBottom: 100, paddingLeft: 48, paddingRight: 48, maxWidth: 860, margin: "0 auto" }}>

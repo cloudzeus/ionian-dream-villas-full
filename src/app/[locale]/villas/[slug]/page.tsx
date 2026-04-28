@@ -46,6 +46,8 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
   const { locale, slug } = await params
   const t = await getTranslations({ locale, namespace: "villa" })
 
+  // No .catch() here — DB errors must throw and trigger error.tsx (auto-retry UI).
+  // findUnique returns null only when the record genuinely doesn't exist → real 404.
   const villa = await prisma.villa.findUnique({
     where: { slug },
     include: {
@@ -58,7 +60,7 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
       amenities: { include: { translations: { where: { locale: locale as any } } } },
       rates: { orderBy: { sortOrder: "asc" } },
     },
-  }).catch(() => null)
+  })
 
   if (!villa) notFound()
 
@@ -72,7 +74,7 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
       translations: { where: { locale: locale as any } },
       images: { where: { isCover: true }, take: 1 },
     },
-  }).catch(() => [])
+  })
 
   const jsonLd = {
     "@context": "https://schema.org",

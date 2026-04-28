@@ -1,8 +1,9 @@
 import type { Metadata } from "next"
-import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { getPageSeo, buildMetadata } from "@/lib/seo"
 import { getLegalDefault } from "@/lib/legal-defaults"
+
+export const dynamic = "force-dynamic"
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
@@ -13,17 +14,17 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function TermsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
 
+  // DB content is optional — these pages always render with bundled defaults.
+  // .catch() is acceptable here ONLY because a true fallback exists in code.
   const page = await prisma.legalPage.findUnique({
     where: { pageKey_locale: { pageKey: "terms", locale: locale as any } },
   }).catch(() => null)
-  // Fall back to English DB entry, then to built-in defaults
   const fallback = page ? null : await prisma.legalPage.findUnique({
     where: { pageKey_locale: { pageKey: "terms", locale: "en" } },
   }).catch(() => null)
   const dbContent = page || fallback
-  const staticDefault = getLegalDefault("terms", locale)
-  const content = dbContent ?? (staticDefault ? { ...staticDefault, updatedAt: new Date(0) } : null)
-  if (!content) notFound()
+  const staticDefault = getLegalDefault("terms", locale) || getLegalDefault("terms", "en")!
+  const content = dbContent ?? { ...staticDefault, updatedAt: new Date(0) }
 
   return (
     <div style={{ paddingTop: 140, paddingBottom: 100, paddingLeft: 48, paddingRight: 48, maxWidth: 860, margin: "0 auto" }}>

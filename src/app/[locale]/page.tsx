@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma"
 import { getPageSeo, buildMetadata } from "@/lib/seo"
 import JsonLd from "@/components/primitives/JsonLd"
 import { SITE_URL, SITE_NAME } from "@/lib/seo"
+export const dynamic = "force-dynamic"
+
 import HeroSlideshow from "@/components/home/HeroSlideshow"
 import MottosSection from "@/components/home/MottosSection"
 import VillasSection from "@/components/home/VillasSection"
@@ -26,6 +28,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   if (!["en", "el", "de"].includes(locale)) notFound()
   const t = await getTranslations({ locale, namespace: "home" })
 
+  // Let DB errors throw → error.tsx auto-retry. No silent .catch swallowing transient failures.
   const [villas, locationRows, heroSlides] = await Promise.all([
     prisma.villa.findMany({
       where: { published: true },
@@ -35,7 +38,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         images: { orderBy: { sortOrder: "asc" }, take: 5 },
         rates: { orderBy: { sortOrder: "asc" }, take: 1 },
       },
-    }).catch(() => []),
+    }),
     prisma.location.findMany({
       where: { published: true },
       orderBy: { sortOrder: "asc" },
@@ -44,11 +47,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         translations: { where: { locale: locale as any } },
         images: { orderBy: { sortOrder: "asc" }, take: 1 },
       },
-    }).catch(() => []),
+    }),
     prisma.heroSlide.findMany({
       where: { active: true },
       orderBy: { sortOrder: "asc" },
-    }).catch(() => []),
+    }),
   ])
 
   const tones = ["sea", "sand", "stone", "sea", "sand", "stone"] as const
