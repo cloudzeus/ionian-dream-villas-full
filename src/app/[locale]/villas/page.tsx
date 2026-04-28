@@ -6,8 +6,6 @@ import Link from "next/link"
 import Image from "next/image"
 import MotionInit from "@/components/chrome/MotionInit"
 
-export const dynamic = "force-dynamic"
-
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
   const seo = await getPageSeo("villas", locale)

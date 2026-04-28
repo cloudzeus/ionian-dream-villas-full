@@ -8,8 +8,6 @@ import { prisma } from "@/lib/prisma"
 import { getPageSeo, buildMetadata, SITE_URL } from "@/lib/seo"
 import JsonLd from "@/components/primitives/JsonLd"
 
-export const dynamic = "force-dynamic"
-
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params
   const [seo, location] = await Promise.all([
