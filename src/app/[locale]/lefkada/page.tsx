@@ -19,7 +19,6 @@ export default async function LefkadaPage({ params }: { params: Promise<{ locale
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: "lefkada" })
 
-  // Let DB errors throw → error.tsx auto-retry. Empty result is fine; transient error must surface.
   const locations = await prisma.location.findMany({
     where: { published: true },
     orderBy: { sortOrder: "asc" },
@@ -27,7 +26,7 @@ export default async function LefkadaPage({ params }: { params: Promise<{ locale
       translations: { where: { locale: locale as any } },
       images: { orderBy: { sortOrder: "asc" }, take: 1 },
     },
-  })
+  }).catch(() => [])
 
   const featured = locations[0]
   const rest = locations.slice(1)

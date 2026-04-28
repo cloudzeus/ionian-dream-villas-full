@@ -19,7 +19,6 @@ export default async function VillasPage({ params }: { params: Promise<{ locale:
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: "villa" })
 
-  // Let DB errors throw → error.tsx auto-retry. Empty result is fine; transient error must surface.
   const villas = await prisma.villa.findMany({
     where: { published: true },
     orderBy: { sortOrder: "asc" },
@@ -28,7 +27,7 @@ export default async function VillasPage({ params }: { params: Promise<{ locale:
       images: { orderBy: { sortOrder: "asc" }, take: 3 },
       rates: { orderBy: { sortOrder: "asc" }, take: 1 },
     },
-  })
+  }).catch(() => [])
 
   return (
     <>

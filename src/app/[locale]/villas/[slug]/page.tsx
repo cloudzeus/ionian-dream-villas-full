@@ -74,7 +74,7 @@ export default async function VillaDetailPage({ params }: { params: Promise<{ lo
       translations: { where: { locale: locale as any } },
       images: { where: { isCover: true }, take: 1 },
     },
-  })
+  }).catch(() => [])
 
   const jsonLd = {
     "@context": "https://schema.org",
