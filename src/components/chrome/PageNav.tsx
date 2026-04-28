@@ -66,7 +66,7 @@ export default function PageNav({ locale }: { locale: string }) {
       className="x-page-nav"
       >
         {/* Logo */}
-        <Link href={`/${locale}`} style={{ zIndex: 2, flexShrink: 0 }}>
+        <Link href={`/${locale}`} prefetch={false} style={{ zIndex: 2, flexShrink: 0 }}>
           <IDVLogo color={menuOpen ? "var(--color-ink)" : scrolled ? "var(--color-ink)" : "white"} />
         </Link>
 
@@ -76,7 +76,7 @@ export default function PageNav({ locale }: { locale: string }) {
           fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: "var(--font-mono)",
         }}>
           {navLinks.map(([label, href]) => (
-            <Link key={href} href={href} style={{
+            <Link key={href} href={href} prefetch={false} style={{
               color: "inherit", textDecoration: "none",
               opacity: pathname.startsWith(href) ? 1 : 0.75, transition: "opacity 0.2s",
             }}>
@@ -89,7 +89,7 @@ export default function PageNav({ locale }: { locale: string }) {
         <div className="x-nav-right" style={{ display: "flex", gap: 12, alignItems: "center" }}>
           <div style={{ display: "flex", border: `1px solid ${scrolled ? "var(--color-rule)" : "rgba(255,255,255,0.3)"}` }}>
             {LOCALES.map((loc) => (
-              <Link key={loc} href={`/${loc}${pathWithoutLocale}`} style={{
+              <Link key={loc} href={`/${loc}${pathWithoutLocale}`} prefetch={false} style={{
                 display: "block", padding: "5px 9px", textDecoration: "none",
                 fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase",
                 color: loc === locale ? (scrolled ? "var(--color-ink)" : "white") : (scrolled ? "var(--color-ink-soft)" : "rgba(255,255,255,0.45)"),
@@ -100,7 +100,7 @@ export default function PageNav({ locale }: { locale: string }) {
               </Link>
             ))}
           </div>
-          <Link href={`/${locale}/contact`} style={{
+          <Link href={`/${locale}/contact`} prefetch={false} style={{
             background: scrolled ? "var(--color-ink)" : "white",
             color: scrolled ? "white" : "var(--color-ink)",
             padding: "10px 20px", fontSize: 11, letterSpacing: "0.2em",
@@ -168,6 +168,7 @@ export default function PageNav({ locale }: { locale: string }) {
             <Link
               key={href}
               href={href}
+              prefetch={false}
               onClick={() => setMenuOpen(false)}
               style={{
                 display: "block",
@@ -199,6 +200,7 @@ export default function PageNav({ locale }: { locale: string }) {
             <Link
               key={loc}
               href={`/${loc}${pathWithoutLocale}`}
+              prefetch={false}
               onClick={() => setMenuOpen(false)}
               style={{
                 display: "block", padding: "10px 18px",
@@ -218,6 +220,7 @@ export default function PageNav({ locale }: { locale: string }) {
         {/* Enquire CTA */}
         <Link
           href={`/${locale}/contact`}
+          prefetch={false}
           onClick={() => setMenuOpen(false)}
           style={{
             display: "inline-flex", alignItems: "center", gap: 12,

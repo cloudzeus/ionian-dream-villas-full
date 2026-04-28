@@ -135,6 +135,7 @@ export default async function SiteFooter({ locale }: Props) {
               <Link
                 key={l.href}
                 href={l.href}
+                prefetch={false}
                 style={{
                   fontFamily: "var(--font-display)", fontSize: 17, fontWeight: 300,
                   color: "rgba(255,255,255,0.6)", textDecoration: "none",
@@ -196,6 +197,7 @@ export default async function SiteFooter({ locale }: Props) {
               <Link
                 key={l.href}
                 href={l.href}
+                prefetch={false}
                 style={{
                   fontFamily: "var(--font-display)", fontSize: 15, fontWeight: 300,
                   color: "rgba(255,255,255,0.5)", textDecoration: "none",
