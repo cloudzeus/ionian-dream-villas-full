@@ -22,7 +22,9 @@ export default async function SiteFooter({ locale }: Props) {
     "social:instagram", "social:facebook", "social:twitter", "social:youtube", "social:tripadvisor",
     "ci:email_main", "ci:phone1_value", "ci:addr1_value",
   ]
-  const rows = await prisma.siteSetting.findMany({ where: { key: { in: keys } } })
+  // .catch() is correct here: this component is inside the layout, so error.tsx
+  // cannot catch layout-level throws. The footer renders fine without DB data.
+  const rows = await prisma.siteSetting.findMany({ where: { key: { in: keys } } }).catch(() => [])
   const db = Object.fromEntries(rows.map(r => [r.key, r.value]))
 
   const socials = [
