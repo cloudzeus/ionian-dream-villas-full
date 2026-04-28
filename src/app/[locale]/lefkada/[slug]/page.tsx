@@ -148,9 +148,9 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
             {tr?.kind || "Location"}
           </div>
           <h1 style={{ margin: 0, fontFamily: "var(--font-display)", fontWeight: 300, letterSpacing: "-0.025em", lineHeight: 0.93 }}>
-            <div className="x-hero-line" style={{ fontSize: "clamp(56px, 9vw, 150px)", display: "block", overflow: "hidden" }}>
+            <span className="x-hero-line" style={{ fontSize: "clamp(56px, 9vw, 150px)", display: "block", overflow: "hidden" }}>
               {tr?.name || slug}
-            </div>
+            </span>
           </h1>
           {tr?.nameLocal && (
             <div className="x-hero-meta" style={{ fontFamily: "var(--font-greek)", fontSize: 24, fontStyle: "italic", marginTop: 12, opacity: 0.85 }}>

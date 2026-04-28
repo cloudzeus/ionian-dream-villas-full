@@ -72,9 +72,9 @@ export default function HeroSlideshow({ locale, villas, slides }: Props) {
       {/* Main text */}
       <div className="x-hero-text" style={{ position: "absolute", left: 48, right: "30%", bottom: "18vh", zIndex: 3, overflow: "hidden" }}>
         <h1 style={{ margin: 0, fontFamily: "var(--font-display)", fontWeight: 300, letterSpacing: "-0.025em", lineHeight: 0.93 }}>
-          <div className="x-hero-line" style={{ fontSize: "clamp(52px, 9vw, 160px)", display: "block", overflow: "hidden" }}>A quiet</div>
-          <div className="x-hero-line" style={{ fontSize: "clamp(52px, 9vw, 160px)", display: "block", paddingLeft: "12vw", fontStyle: "italic", overflow: "hidden" }}>island</div>
-          <div className="x-hero-line" style={{ fontSize: "clamp(52px, 9vw, 160px)", display: "block", overflow: "hidden" }}>kept for the few.</div>
+          <span className="x-hero-line" style={{ fontSize: "clamp(52px, 9vw, 160px)", display: "block", overflow: "hidden" }}>A quiet</span>
+          <span className="x-hero-line" style={{ fontSize: "clamp(52px, 9vw, 160px)", display: "block", paddingLeft: "12vw", fontStyle: "italic", overflow: "hidden" }}>island</span>
+          <span className="x-hero-line" style={{ fontSize: "clamp(52px, 9vw, 160px)", display: "block", overflow: "hidden" }}>kept for the few.</span>
         </h1>
       </div>
 
