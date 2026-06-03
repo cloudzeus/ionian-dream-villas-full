@@ -3,8 +3,15 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
 export async function GET() {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
   const settings = await prisma.siteSetting.findMany()
-  return NextResponse.json(Object.fromEntries(settings.map(s => [s.key, s.value])))
+  // Never expose secrets (SMTP password) over the API, even to authenticated admins.
+  const SENSITIVE = new Set(["smtp:pass"])
+  return NextResponse.json(
+    Object.fromEntries(settings.filter(s => !SENSITIVE.has(s.key)).map(s => [s.key, s.value])),
+  )
 }
 
 export async function POST(req: NextRequest) {

@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { requireAuth } from "@/lib/api-auth"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string; imgId: string }> }) {
+  const denied = await requireAuth()
+  if (denied) return denied
+
   const { id: locationId, imgId } = await params
   const { isCover, altEn, sortOrder } = await req.json()
   try {
@@ -19,6 +23,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ imgId: string }> }) {
+  const denied = await requireAuth()
+  if (denied) return denied
+
   const { imgId } = await params
   try {
     await prisma.locationImage.delete({ where: { id: imgId } })

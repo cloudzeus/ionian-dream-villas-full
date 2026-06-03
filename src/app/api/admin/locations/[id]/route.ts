@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { requireAuth } from "@/lib/api-auth"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const denied = await requireAuth()
+  if (denied) return denied
+
   const { id } = await params
   const body = await req.json()
   const { slug, tone, sortOrder, published } = body
@@ -17,6 +21,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const denied = await requireAuth()
+  if (denied) return denied
+
   const { id } = await params
   try {
     await prisma.location.delete({ where: { id } })

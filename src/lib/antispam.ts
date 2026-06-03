@@ -24,6 +24,16 @@ const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000 // ...per 10 minutes per IP
 type Hit = { count: number; resetAt: number }
 const buckets = new Map<string, Hit>()
 
+// Opportunistic cleanup so the Map can't grow unbounded across many IPs.
+// Runs only when the Map gets large, and only drops already-expired entries.
+const SWEEP_THRESHOLD = 5000
+function sweepExpired(now: number) {
+  if (buckets.size < SWEEP_THRESHOLD) return
+  for (const [ip, hit] of buckets) {
+    if (now > hit.resetAt) buckets.delete(ip)
+  }
+}
+
 /** Best-effort client IP from common proxy headers. */
 export function getClientIp(headers: Headers): string {
   const xff = headers.get("x-forwarded-for")
@@ -34,6 +44,7 @@ export function getClientIp(headers: Headers): string {
 /** Sliding-window per-IP rate limit. Returns false when the cap is exceeded. */
 export function checkRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
   const now = Date.now()
+  sweepExpired(now)
   const hit = buckets.get(ip)
 
   if (!hit || now > hit.resetAt) {

@@ -5,7 +5,6 @@ import { routing } from "@/i18n/routing"
 import PageNav from "@/components/chrome/PageNav"
 import SiteFooter from "@/components/chrome/SiteFooter"
 import CookieBanner from "@/components/chrome/CookieBanner"
-import LangSetter from "@/components/chrome/LangSetter"
 
 export function generateStaticParams() {
   return [{ locale: "en" }, { locale: "el" }, { locale: "de" }]
@@ -24,7 +23,6 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <LangSetter locale={locale} />
       <PageNav locale={locale} />
       <main>{children}</main>
       <SiteFooter locale={locale} />

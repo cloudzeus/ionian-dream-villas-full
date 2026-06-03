@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server"
 import { deepseekJSON } from "@/lib/deepseek"
+import { requireAuth } from "@/lib/api-auth"
 
 interface Motto { eyebrow: string; title: string; body: string }
 interface MottoSet { motto0: Motto; motto1: Motto; motto2: Motto }
 
 // Generates 3 mottos about Lefkada in EN, EL, DE simultaneously.
 export async function POST() {
+  const denied = await requireAuth()
+  if (denied) return denied
+
   try {
     const result = await deepseekJSON<{ en: MottoSet; el: MottoSet; de: MottoSet }>(
       `You are an award-winning luxury travel copywriter who has written for Condé Nast Traveller, Monocle, and Kinfolk. You craft intimate, literary travel prose that makes readers feel they are already there — never clichéd, never overwrought, never promotional.

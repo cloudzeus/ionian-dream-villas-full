@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { requireAuth } from "@/lib/api-auth"
 
 export async function POST(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const denied = await requireAuth()
+  if (denied) return denied
+
   const { id: locationId } = await params
   try {
     const count = await prisma.locationFact.count({ where: { locationId } })

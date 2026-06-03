@@ -28,7 +28,9 @@ export async function getSmtpConfig(): Promise<SmtpConfig | null> {
   // Resolve each value: DB → env var → hardcoded default
   const host      = db["smtp:host"]      || process.env.NODEMAILER_HOST      || ""
   const port      = db["smtp:port"]      || process.env.NODEMAILER_PORT      || "587"
-  const secure    = db["smtp:secure"]    ?? (process.env.NODEMAILER_PORT === "465" ? "true" : "false")
+  // Derive the secure default from the *resolved* port (not env), so a DB-set
+  // port of 587 doesn't inherit secure=true from NODEMAILER_PORT=465.
+  const secure    = db["smtp:secure"]    ?? (port === "465" ? "true" : "false")
   const user      = db["smtp:user"]      || process.env.NODEMAILER_USER      || ""
   const pass      = db["smtp:pass"]      || process.env.NODEMAILER_PASS      || ""
   const fromName  = db["smtp:from_name"] || process.env.NODEMAILER_FROM_NAME || "Ionian Dream Villas"

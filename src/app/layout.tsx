@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next"
+import { getLocale } from "next-intl/server"
 import {
   Cormorant_Garamond,
   GFS_Didot,
@@ -67,14 +68,15 @@ export const viewport: Viewport = {
   ],
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const locale = await getLocale()
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${cormorant.variable} ${gfsDidot.variable} ${inter.variable} ${jetbrains.variable}`}
     >
       <body suppressHydrationWarning>{children}</body>

@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { requireAuth } from "@/lib/api-auth"
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const denied = await requireAuth()
+  if (denied) return denied
+
   const { id: locationId } = await params
   const { url, altEn, sortOrder, isCover } = await req.json()
   try {

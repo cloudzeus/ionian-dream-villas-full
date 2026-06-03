@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { requireAuth } from "@/lib/api-auth"
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string; locale: string }> }) {
+  const denied = await requireAuth()
+  if (denied) return denied
+
   const { id: locationId, locale } = await params
   const { name, nameLocal, kind, short, long } = await req.json()
   try {

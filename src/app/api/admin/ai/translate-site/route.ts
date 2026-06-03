@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
 import { deepseekJSON } from "@/lib/deepseek"
+import { requireAuth } from "@/lib/api-auth"
 
 // Translates all site text fields from EN to a target locale.
 // Body: { fields: Record<string, string>, targetLocale: "el" | "de" }
 // Returns: Record<string, string>
 export async function POST(req: NextRequest) {
+  const denied = await requireAuth()
+  if (denied) return denied
+
   try {
     const { fields, targetLocale } = await req.json() as {
       fields: Record<string, string>

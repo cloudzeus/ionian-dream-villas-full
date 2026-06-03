@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import { deepseekJSON } from "@/lib/deepseek"
+import { requireAuth } from "@/lib/api-auth"
 
 // POST { label: string, body: string, targetLocale: "el" | "de" }
 // Translates a single rate term (label + body) to the target language.
 export async function POST(req: NextRequest) {
+  const denied = await requireAuth()
+  if (denied) return denied
+
   try {
     const { label, body, targetLocale } = await req.json() as {
       label: string
