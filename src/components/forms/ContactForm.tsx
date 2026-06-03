@@ -1,15 +1,23 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useTranslations } from "next-intl"
+import { HONEYPOT_FIELD, TIMESTAMP_FIELD } from "@/lib/antispam"
 
 export default function ContactForm({ locale }: { locale: string }) {
   const t = useTranslations("contact")
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle")
+  const [name, setName] = useState("")
+  // Time-trap token: stored in a ref (no re-render, no hydration drift), set on mount.
+  const loadedAt = useRef(0)
+  useEffect(() => {
+    loadedAt.current = Date.now()
+  }, [])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setStatus("sending")
     const fd = new FormData(e.currentTarget)
+    setName(String(fd.get("name") || ""))
     const res = await fetch("/api/enquire", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -19,6 +27,8 @@ export default function ContactForm({ locale }: { locale: string }) {
         email: fd.get("email"),
         villa: fd.get("villa") || undefined,
         message: fd.get("message"),
+        [HONEYPOT_FIELD]: fd.get(HONEYPOT_FIELD) || "",
+        [TIMESTAMP_FIELD]: loadedAt.current,
       }),
     })
     setStatus(res.ok ? "success" : "error")
@@ -36,11 +46,29 @@ export default function ContactForm({ locale }: { locale: string }) {
   }
 
   if (status === "success") {
-    return <p style={{ fontSize: 18, lineHeight: 1.8, color: "var(--color-ink-soft)", paddingTop: 40 }}>{t("success")}</p>
+    return (
+      <div style={{ paddingTop: 40 }}>
+        {name && (
+          <p style={{ fontSize: 18, lineHeight: 1.8, color: "var(--color-ink)", fontWeight: 600, marginBottom: 8 }}>
+            {name},
+          </p>
+        )}
+        <p style={{ fontSize: 18, lineHeight: 1.8, color: "var(--color-ink-soft)" }}>{t("success")}</p>
+      </div>
+    )
   }
 
   return (
     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 24, paddingTop: 16 }}>
+      {/* Honeypot — hidden from humans, tempting to bots. Must stay empty. */}
+      <input
+        type="text"
+        name={HONEYPOT_FIELD}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+      />
       {[["name", t("name"), "text"], ["email", t("email"), "email"]].map(([name, label, type]) => (
         <div key={name}>
           <label className="mono-label" style={{ display: "block", marginBottom: 8 }}>{label}</label>

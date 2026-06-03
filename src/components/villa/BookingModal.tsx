@@ -1,6 +1,7 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useTranslations } from "next-intl"
+import { HONEYPOT_FIELD, TIMESTAMP_FIELD } from "@/lib/antispam"
 
 interface Props {
   villaSlug: string
@@ -12,11 +13,18 @@ interface Props {
 export default function BookingModal({ villaSlug, villaName, open, onClose }: Props) {
   const t = useTranslations("booking")
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle")
+  const [name, setName] = useState("")
+  // Time-trap token: stored in a ref (no re-render), reset each time the modal opens.
+  const loadedAt = useRef(0)
+  useEffect(() => {
+    if (open) loadedAt.current = Date.now()
+  }, [open])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setStatus("sending")
     const fd = new FormData(e.currentTarget)
+    setName(String(fd.get("name") || ""))
     const body = {
       kind: "booking",
       name: fd.get("name"),
@@ -26,6 +34,8 @@ export default function BookingModal({ villaSlug, villaName, open, onClose }: Pr
       nights: Number(fd.get("nights")),
       guests: Number(fd.get("guests")),
       message: fd.get("message"),
+      [HONEYPOT_FIELD]: fd.get(HONEYPOT_FIELD) || "",
+      [TIMESTAMP_FIELD]: loadedAt.current,
     }
     const res = await fetch("/api/enquire", {
       method: "POST",
@@ -87,9 +97,25 @@ export default function BookingModal({ villaSlug, villaName, open, onClose }: Pr
         </h2>
 
         {status === "success" ? (
-          <p style={{ fontSize: 18, lineHeight: 1.8, color: "var(--color-ink-soft)" }}>{t("success")}</p>
+          <div>
+            {name && (
+              <p style={{ fontSize: 18, lineHeight: 1.8, color: "var(--color-ink)", fontWeight: 600, marginBottom: 8 }}>
+                {name},
+              </p>
+            )}
+            <p style={{ fontSize: 18, lineHeight: 1.8, color: "var(--color-ink-soft)" }}>{t("success")}</p>
+          </div>
         ) : (
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+            {/* Honeypot — hidden from humans, must stay empty. */}
+            <input
+              type="text"
+              name={HONEYPOT_FIELD}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+            />
             <Field label={t("name")} name="name" type="text" required />
             <Field label={t("email")} name="email" type="email" required />
             <div>

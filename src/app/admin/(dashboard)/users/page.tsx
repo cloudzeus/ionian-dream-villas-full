@@ -1,46 +1,42 @@
 import { prisma } from "@/lib/prisma"
+import { auth } from "@/lib/auth"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import UsersManager from "@/components/admin/UsersManager"
 
 export default async function UsersPage() {
+  const session = await auth()
+  const current = session?.user as { id?: string; role?: string } | undefined
+  const isAdmin = current?.role === "ADMIN"
+
   const users = await prisma.user.findMany({ orderBy: { createdAt: "desc" } })
+  const rows = users.map(u => ({
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    role: u.role,
+    createdAt: u.createdAt.toISOString(),
+  }))
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-foreground">Users</h1>
-        <p className="text-sm text-muted-foreground mt-1">{users.length} system user{users.length !== 1 ? "s" : ""}</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          {rows.length} system user{rows.length !== 1 ? "s" : ""}
+        </p>
       </div>
 
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Joined</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users.map((u) => (
-                <TableRow key={u.id}>
-                  <TableCell className="font-medium text-foreground">{u.name || "—"}</TableCell>
-                  <TableCell className="text-muted-foreground">{u.email}</TableCell>
-                  <TableCell>
-                    <Badge variant={u.role === "ADMIN" ? "default" : "secondary"}>{u.role}</Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-xs">
-                    {u.createdAt?.toLocaleDateString() || "—"}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      {isAdmin ? (
+        <div className="space-y-4">
+          <UsersManager users={rows} currentUserId={current?.id ?? ""} />
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="py-10 text-center text-sm text-muted-foreground">
+            Only administrators can manage users.
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

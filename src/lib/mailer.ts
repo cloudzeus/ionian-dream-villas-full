@@ -33,7 +33,7 @@ export async function getSmtpConfig(): Promise<SmtpConfig | null> {
   const pass      = db["smtp:pass"]      || process.env.NODEMAILER_PASS      || ""
   const fromName  = db["smtp:from_name"] || process.env.NODEMAILER_FROM_NAME || "Ionian Dream Villas"
   const fromEmail = db["smtp:from_email"]|| process.env.NODEMAILER_USER      || user
-  const toEmail   = db["smtp:to_email"]  || process.env.MAIL_TO              || "stay@ionian-dream-villas.com"
+  const toEmail   = db["smtp:to_email"]  || process.env.MAIL_TO              || "info@ionian-dream-villas.com"
 
   if (!host || !user || !pass) return null
 
@@ -60,7 +60,7 @@ export function getEnvSmtpDefaults(): Partial<SmtpConfig> {
     pass:      process.env.NODEMAILER_PASS      || "",
     fromName:  process.env.NODEMAILER_FROM_NAME || "Ionian Dream Villas",
     fromEmail: process.env.NODEMAILER_USER      || "",
-    toEmail:   process.env.MAIL_TO              || "stay@ionian-dream-villas.com",
+    toEmail:   process.env.MAIL_TO              || "info@ionian-dream-villas.com",
   }
 }
 
@@ -88,7 +88,10 @@ export async function sendEnquiryNotification(enquiry: {
   message: string
 }) {
   const cfg = await getSmtpConfig()
-  if (!cfg) return
+  if (!cfg) {
+    console.warn("[mailer] enquiry notification skipped — SMTP not configured (host/user/pass missing)")
+    return
+  }
 
   const lines = [
     `Name:    ${enquiry.name}`,
@@ -115,20 +118,33 @@ export async function sendEnquiryNotification(enquiry: {
 
 // ─── Thank-you email to guest ─────────────────────────────────────────────────
 
+const DEFAULT_THANKYOU_HTML = `
+  <div style="font-family:Georgia,serif;font-size:16px;line-height:1.7;color:#222;max-width:560px">
+    <p>Dear {{name}},</p>
+    <p>Thank you for reaching out to <strong>Ionian Dream Villas</strong>. We have received your
+    enquiry and a member of our team will get back to you very shortly.</p>
+    <p>Warm regards,<br/>The Ionian Dream Villas Team</p>
+  </div>
+`.trim()
+
 export async function sendThankYouEmail(
   toEmail: string,
   vars: Record<string, string>,
 ) {
   const cfg = await getSmtpConfig()
-  if (!cfg) return
+  if (!cfg) {
+    console.warn("[mailer] thank-you email skipped — SMTP not configured")
+    return
+  }
 
   const keys = ["thankyou:subject", "thankyou:body_html"]
   const rows = await prisma.siteSetting.findMany({ where: { key: { in: keys } } })
   const map = Object.fromEntries(rows.map(r => [r.key, r.value]))
 
-  const rawSubject = map["thankyou:subject"] || "Thank you for your enquiry"
-  const rawHtml = map["thankyou:body_html"]
-  if (!rawHtml) return
+  const rawSubject = map["thankyou:subject"] || "Thank you for your enquiry, {{name}}"
+  // Fall back to a sensible default so guests are always thanked by name,
+  // even before an admin customises the template in the admin panel.
+  const rawHtml = map["thankyou:body_html"] || DEFAULT_THANKYOU_HTML
 
   // Replace all {{variable}} placeholders
   const replace = (str: string) =>
@@ -153,7 +169,7 @@ export async function testSmtpConnection(cfg: SmtpConfig): Promise<{ ok: boolean
     const t = makeTransporter(cfg)
     await t.verify()
     return { ok: true }
-  } catch (e: any) {
-    return { ok: false, error: e.message }
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Connection failed" }
   }
 }

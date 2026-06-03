@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from "next/server"
 
 const intlMiddleware = createMiddleware(routing)
 
-export default function middleware(req: NextRequest) {
+// Renamed from `middleware` to `proxy` per the Next.js 16 file-convention change.
+export default function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
 
   if (pathname.startsWith("/admin")) {
